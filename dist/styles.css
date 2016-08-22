@@ -1,1 +1,1 @@
-h1{color:red}ul li{color:black}.tile{color:blue;border:2px black dashed}h2{color:green}
+.box{border:5px black solid;display:table;border-collapse:collapse}.box .row{display:table-row}.box .row .tile-container{display:table-cell}.tile{border:1px black solid;display:table;border-collapse:collapse;color:#808080;font-size:16px}.tile .row{display:table-row}.tile .row .number{height:20px;width:20px;text-align:center;display:table-cell}

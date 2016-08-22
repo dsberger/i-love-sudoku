@@ -1,8 +1,19 @@
 .tile {
-  color: blue;
-  border: 2px black dashed;
-}
+  border: 1px black solid;
+  display: table;
+  border-collapse: collapse;
 
-h2 {
-  color: green;
+  color: #808080;
+  font-size: 16px;
+
+  .row {
+    display: table-row;
+
+    .number {
+      height: 20px;
+      width: 20px;
+      text-align: center;
+      display: table-cell;
+    }
+  }
 }
