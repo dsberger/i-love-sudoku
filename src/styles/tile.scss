@@ -1,19 +1,22 @@
+$cell-size: 20px;
+
 .tile {
   border: 1px black solid;
   display: table;
   border-collapse: collapse;
 
   color: #808080;
-  font-size: 16px;
+  font-size: $cell-size * 0.8;
 
   .row {
     display: table-row;
 
     .number {
-      height: 20px;
-      width: 20px;
-      text-align: center;
       display: table-cell;
+      height: $cell-size;
+      width: $cell-size;
+      line-height: $cell-size;
+      text-align: center;
     }
   }
 }
