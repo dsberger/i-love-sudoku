@@ -5,15 +5,18 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build:css && npm run build:html",
     "build:css": "node-sass --output-style compressed src/styles/main.scss dist/styles.css",
-    "build:html": "pug src/index.pug -o dist",
-    "watch:css": "npm run build:css -- -w src/styles",
-    "watch:html": "npm run build:html -- -w src/views"
+    "build:html": "pug src/views/index.pug -o dist",
+    "watch": "parallelshell \"npm run watch:css\" \"npm run watch:html\"",
+    "watch:css": "npm run build:css && npm run build:css -- -w src/styles",
+    "watch:html": "npm run build:html -- -w src/views/index.pug"
   },
   "author": "Dan Berger <dsberger@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "node-sass": "3.8.0",
+    "parallelshell": "2.0.0",
     "pug": "2.0.0-beta5",
     "pug-cli": "1.0.0-alpha6"
   }
