@@ -1,17 +1,24 @@
 $cell-size: 20px;
+$tile-size: $cell-size * 3;
+$unsolved-font-color: #808080;
+$solved-font-color: #000000;
+$font-size-factor: 0.8;
 
 .tile {
   border: 1px black solid;
+}
+
+.tile.unsolved {
   display: table;
   border-collapse: collapse;
 
-  color: #808080;
-  font-size: $cell-size * 0.8;
+  color: $unsolved-font-color;
 
   .row {
     display: table-row;
 
     .number {
+      font-size: $cell-size * $font-size-factor;
       display: table-cell;
       height: $cell-size;
       width: $cell-size;
@@ -19,4 +26,23 @@ $cell-size: 20px;
       text-align: center;
     }
   }
+}
+
+.tile.solved {
+  position: absolute;
+  font-size: $tile-size * $font-size-factor;
+  height: $tile-size;
+  width: $tile-size;
+  line-height: $tile-size;
+  text-align: center;
+}
+
+.tile.user-solved {
+  @extend .tile.solved;
+  color: $solved-font-color;
+}
+
+.tile.app-solved {
+  @extend .tile.solved;
+  color: $unsolved-font-color;
 }
