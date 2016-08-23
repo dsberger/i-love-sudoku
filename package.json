@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run build:css && npm run build:html",
+    "build": "npm run build:css && npm run build:html && npm run build:js",
     "build:css": "node-sass --output-style compressed src/styles/main.scss dist/styles.css",
     "build:html": "pug src/views/index.pug -o dist",
-    "watch": "parallelshell \"npm run watch:css\" \"npm run watch:html\"",
+    "build:js": "tsc",
+    "watch": "parallelshell \"npm run watch:css\" \"npm run watch:html\" \"npm run watch:js\"",
     "watch:css": "npm run build:css && npm run build:css -- -w src/styles",
-    "watch:html": "npm run build:html -- -w src/views/index.pug"
+    "watch:html": "npm run build:html -- -w src/views/index.pug",
+    "watch:js": "npm run build:js -- -w"
   },
   "author": "Dan Berger <dsberger@gmail.com>",
   "license": "ISC",
