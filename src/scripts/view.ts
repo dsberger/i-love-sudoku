@@ -11,9 +11,9 @@ let view = {
     const tile = this.parentElement.parentElement.parentElement
     const coords = tile.getAttribute('coords')
     const params = {
-      value: this.innerText,
-      x: coords[0],
-      y: coords[1]
+      value: parseInt(this.innerText, 10),
+      x: parseInt(coords[0], 10),
+      y: parseInt(coords[1], 10)
     }
     console.log(params)
   }

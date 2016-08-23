@@ -1,3 +1,8 @@
+var Cell = (function () {
+    function Cell() {
+    }
+    return Cell;
+}());
 var view = {
     init: function () {
         var numbers = document.getElementsByClassName('number');
@@ -9,9 +14,9 @@ var view = {
         var tile = this.parentElement.parentElement.parentElement;
         var coords = tile.getAttribute('coords');
         var params = {
-            value: this.innerText,
-            x: coords[0],
-            y: coords[1]
+            value: parseInt(this.innerText, 10),
+            x: parseInt(coords[0], 10),
+            y: parseInt(coords[1], 10)
         };
         console.log(params);
     }

@@ -10,6 +10,7 @@
     "node_modules",
     "build",
     "src/styles",
-    "src/views"
+    "src/views",
+    "test"
     ]
 }
