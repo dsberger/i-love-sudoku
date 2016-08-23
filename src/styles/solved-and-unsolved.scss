@@ -4,11 +4,8 @@ $unsolved-font-color: #808080;
 $solved-font-color: #000000;
 $font-size-factor: 0.8;
 
-.tile {
+.unsolved {
   border: 1px black solid;
-}
-
-.tile.unsolved {
   display: table;
   border-collapse: collapse;
 
@@ -28,7 +25,8 @@ $font-size-factor: 0.8;
   }
 }
 
-.tile.solved {
+.solved {
+  border: 1px black solid;
   position: absolute;
   font-size: $tile-size * $font-size-factor;
   height: $tile-size;
@@ -37,12 +35,12 @@ $font-size-factor: 0.8;
   text-align: center;
 }
 
-.tile.user-solved {
-  @extend .tile.solved;
+.solved-by-user {
+  @extend .solved;
   color: $solved-font-color;
 }
 
-.tile.app-solved {
-  @extend .tile.solved;
+.solved-by-app {
+  @extend .solved;
   color: $unsolved-font-color;
 }
