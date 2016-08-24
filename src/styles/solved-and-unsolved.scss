@@ -35,12 +35,10 @@ $font-size-factor: 0.8;
   text-align: center;
 }
 
-.solved-by-user {
-  @extend .solved;
+.by-user {
   color: $solved-font-color;
 }
 
-.solved-by-app {
-  @extend .solved;
+.by-app {
   color: $unsolved-font-color;
 }
