@@ -1,20 +1,16 @@
 @import 'variables';
 
 .box {
-  height: $box-size;
-  width: $box-size;
+  @include square($box-size);
 
   .row {
-    height: $tile-size + $tile-border-width * 2;
+    height: $tile-size;
     width: $box-size;
 
     .tile {
+      @include standard-border($tile-border-width);
+      @include square($tile-size);
       float: left;
-      border-width: $tile-border-width;
-      border-color: black;
-      border-style: solid;
-      height: $tile-size;
-      width: $tile-size;
     }
   }
 }

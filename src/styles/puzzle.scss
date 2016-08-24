@@ -1,23 +1,17 @@
 @import 'variables';
 
 .puzzle {
+  @include standard-border($puzzle-border-width);
+  @include square($puzzle-size);
   margin: 0 auto;
-  border-width: $puzzle-border-width;
-  border-color: black;
-  border-style: solid;
-  height: $puzzle-size;
-  width: $puzzle-size;
 
   .row {
     height: $box-size;
     width: $puzzle-size;
 
     .box-container {
-      border-width: $box-border-width;
-      border-color: black;
-      border-style: solid;
-      height: $box-size;
-      width: $box-size;
+      @include standard-border($box-border-width);
+      @include square($box-size);
       float: left;
     }
   }

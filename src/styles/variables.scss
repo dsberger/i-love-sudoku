@@ -10,3 +10,20 @@ $puzzle-size: ($box-size + $box-border-width * 2) * 3;
 $app-only-font-color: #808080;
 $user-action-font-color: #000000;
 $font-size-factor: 0.8;
+
+@mixin square($size) {
+  height: $size;
+  width: $size;
+}
+
+@mixin standard-border($size) {
+  border-width: $size;
+  border-style: solid;
+  border-color: black;
+}
+
+@mixin text-centering($size) {
+  font-size: $size * $font-size-factor;
+  line-height: $size;
+  text-align: center;
+}
