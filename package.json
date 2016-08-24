@@ -4,7 +4,7 @@
   "description": "A live Sudoku solver in raw JS.",
   "main": "index.js",
   "scripts": {
-    "test": "npm run build:models && mocha test",
+    "test": "mocha test",
     "build": "npm run build:css && npm run build:html && npm run build:js",
     "build:css": "node-sass --output-style compressed src/styles/main.scss build/styles.css",
     "build:html": "pug src/views/index.pug -o build",
