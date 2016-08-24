@@ -1,14 +1,24 @@
+@import 'variables';
+
 .puzzle {
   margin: 0 auto;
-  border: 3px black solid;
-  display: table;
-  border-collapse: collapse;
+  border-width: $puzzle-border-width;
+  border-color: black;
+  border-style: solid;
+  height: $puzzle-size;
+  width: $puzzle-size;
 
   .row {
-    display: table-row;
+    height: $box-size;
+    width: $puzzle-size;
 
     .box-container {
-      display: table-cell;
+      border-width: $box-border-width;
+      border-color: black;
+      border-style: solid;
+      height: $box-size;
+      width: $box-size;
+      float: left;
     }
   }
 }

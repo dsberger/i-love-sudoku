@@ -1,0 +1,12 @@
+$tile-border-width: 1px;
+$box-border-width: 2px;
+$puzzle-border-width: 3px;
+
+$cell-size: 16px;
+$tile-size: $cell-size * 3;
+$box-size: ($tile-size + $tile-border-width * 2) * 3;
+$puzzle-size: ($box-size + $box-border-width * 2) * 3;
+
+$app-only-font-color: #808080;
+$user-action-font-color: #000000;
+$font-size-factor: 0.8;

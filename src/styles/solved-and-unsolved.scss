@@ -1,22 +1,17 @@
-$cell-size: 16px;
-$tile-size: $cell-size * 3;
-$unsolved-font-color: #808080;
-$solved-font-color: #000000;
-$font-size-factor: 0.8;
+@import 'variables';
 
 .unsolved {
-  border: 1px black solid;
-  display: table;
-  border-collapse: collapse;
-
-  color: $unsolved-font-color;
+  color: $app-only-font-color;
+  height: $tile-size;
+  width: $tile-size;
 
   .row {
-    display: table-row;
+    height: $cell-size;
+    width: $tile-size;
 
     .number {
+      float: left;
       font-size: $cell-size * $font-size-factor;
-      display: table-cell;
       height: $cell-size;
       width: $cell-size;
       line-height: $cell-size;
@@ -26,8 +21,6 @@ $font-size-factor: 0.8;
 }
 
 .solved {
-  border: 1px black solid;
-  position: absolute;
   font-size: $tile-size * $font-size-factor;
   height: $tile-size;
   width: $tile-size;
@@ -36,9 +29,9 @@ $font-size-factor: 0.8;
 }
 
 .by-user {
-  color: $solved-font-color;
+  color: $user-action-font-color;
 }
 
 .by-app {
-  color: $unsolved-font-color;
+  color: $app-only-font-color;
 }

@@ -1,14 +1,20 @@
+@import 'variables';
+
 .box {
-  border: 2px black solid;
-  display: table;
-  border-collapse: collapse;
+  height: $box-size;
+  width: $box-size;
 
   .row {
-    display: table-row;
+    height: $tile-size + $tile-border-width * 2;
+    width: $box-size;
 
     .tile {
-      display: table-cell;
-      position: relative;
+      float: left;
+      border-width: $tile-border-width;
+      border-color: black;
+      border-style: solid;
+      height: $tile-size;
+      width: $tile-size;
     }
   }
 }
