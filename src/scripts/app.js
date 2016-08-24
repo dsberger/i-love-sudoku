@@ -1,3 +1,7 @@
-import view from './view'
+import View from './view'
+import Controller from './controller'
 
-view.init()
+var C = new Controller()
+var V = new View(C)
+
+V.init()
