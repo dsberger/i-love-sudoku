@@ -1,11 +1,8 @@
 mixin box-row(x, y)
   .row
-    .tile(coords=`${x}${y}`)
-        include ./unsolved.pug
-    .tile(coords=`${x+1}${y}`)
-        include ./unsolved.pug
-    .tile(coords=`${x+2}${y}`)
-        include ./unsolved.pug
+    .tile(id=`x${x}y${y}`)
+    .tile(id=`x${x+1}y${y}`)
+    .tile(id=`x${x+2}y${y}`)
 
 mixin box(x, y)
   .box

@@ -4,11 +4,11 @@
   "description": "A live Sudoku solver in raw JS.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test",
+    "test": "npm run build:models && mocha test",
     "build": "npm run build:css && npm run build:html && npm run build:js",
     "build:css": "node-sass --output-style compressed src/styles/main.scss build/styles.css",
     "build:html": "pug src/views/index.pug -o build",
-    "build:js": "tsc",
+    "build:js": "rollup -o build/app.js src/scripts/app.js",
     "watch": "parallelshell \"npm run watch:css\" \"npm run watch:html\" \"npm run watch:js\"",
     "watch:css": "npm run build:css && npm run build:css -- -w src/styles",
     "watch:html": "npm run build:html -- -w src/views/index.pug",
@@ -23,6 +23,6 @@
     "parallelshell": "2.0.0",
     "pug": "2.0.0-beta5",
     "pug-cli": "1.0.0-alpha6",
-    "typescript": "1.8.10"
+    "rollup-watch": "2.5.0"
   }
 }

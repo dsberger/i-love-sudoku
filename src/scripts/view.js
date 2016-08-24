@@ -51,4 +51,4 @@ var view = {
   }
 }
 
-view.init()
+export default view

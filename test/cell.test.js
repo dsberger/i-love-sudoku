@@ -1,2 +1,3 @@
 var expect = require('chai').expect
-var cell = require('../app')
+var cell = require('../src/models/cell')
+
