@@ -13,15 +13,7 @@ function Model (controller) {
 
   this.solve = function (x, y, value) {
     var cell = puzzle[x][y]
-    if (cell.solve(value)) {
-      var params = {
-        action: 'solve',
-        source: 'model',
-        id: cell.id,
-        value: value
-      }
-      controller.enqueue(params)
-    }
+    return cell.solve(value)
   }
 
   // SETUP FUNCTIONS

@@ -3,6 +3,7 @@ function BlockOfNine (cells) {
 
 function Cell (x, y) {
   this.id = `x${x}y${y}`
+  this.touchedByUser = false
 
   var possibleValues = []
 
@@ -15,6 +16,7 @@ function Cell (x, y) {
       return false
     } else {
       possibleValues = [value]
+      this.touchedByUser = true
       return true
     }
   }
@@ -58,15 +60,7 @@ function Model (controller) {
 
   this.solve = function (x, y, value) {
     var cell = puzzle[x][y]
-    if (cell.solve(value)) {
-      var params = {
-        action: 'solve',
-        source: 'model',
-        id: cell.id,
-        value: value
-      }
-      controller.enqueue(params)
-    }
+    return cell.solve(value)
   }
 
   // SETUP FUNCTIONS
@@ -234,13 +228,6 @@ function View (controller) {
 }
 
 function Controller () {
-  var viewQueue = []
-  var modelQueue = []
-
-  this.enqueue = function (params) {
-    viewQueue.push(params)
-  }
-
   this.saveModel = function (model) {
     this.model = model
   }
@@ -249,10 +236,26 @@ function Controller () {
     this.view = view
   }
 
+  // DOM AND MODEL CHANGE, CALLED BY DOM
   this.userSolve = function (numberSelectorID) {
     var id = numberSelectorID.slice(0, 4)
+    var x = numberSelectorID.slice(1, 2)
+    var y = numberSelectorID.slice(3, 4)
     var value = numberSelectorID.slice(5)
-    this.view.changeToUserSolved(id, value)
+    if (this.model.solve(x, y, value)) {
+      this.view.changeToUserSolved(id, value)
+    }
+  }
+
+  // DOM CHANGES, CALLED BY MODEL
+
+  this.appSolve = function (id, value) {
+    this.view.changeToAppSolved(id, value)
+  }
+
+  this.snipNumberSelector = function (id, value) {
+    var combinedID = `${id}v${value}`
+    this.view.snipNumberSelector(combinedID)
   }
 }
 

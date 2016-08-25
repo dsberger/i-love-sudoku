@@ -93,4 +93,34 @@ describe('Cell', () => {
       done()
     })
   })
+
+  describe('#touchedByUser', () => {
+    it('returns false on a new cell', (done) => {
+      var cell = new Cell(1, 2)
+      expect(cell.touchedByUser).to.equal(false)
+      done()
+    })
+    it('returns false after #remove is called', (done) => {
+      var cell = new Cell(1, 2)
+      cell.remove(4)
+      expect(cell.touchedByUser).to.equal(false)
+      done()
+    })
+
+    it('returns true after #solve is called', (done) => {
+      var cell = new Cell(1, 2)
+      cell.solve(8)
+      expect(cell.touchedByUser).to.equal(true)
+      done()
+    })
+
+    it('returns false if the cell has been passively solved with 8 #remove calls', (done) => {
+      var cell = new Cell(1, 2)
+      for (var i = 1; i < 9; i++) {
+        cell.remove(i)
+      }
+      expect(cell.touchedByUser).to.equal(false)
+      done()
+    })
+  })
 })

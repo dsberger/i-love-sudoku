@@ -1,5 +1,6 @@
 function Cell (x, y) {
   this.id = `x${x}y${y}`
+  this.touchedByUser = false
 
   var possibleValues = []
 
@@ -12,6 +13,7 @@ function Cell (x, y) {
       return false
     } else {
       possibleValues = [value]
+      this.touchedByUser = true
       return true
     }
   }
