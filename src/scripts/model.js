@@ -7,10 +7,6 @@ function Model (controller) {
   var columns = createColumns()
   var boxes = createBoxes()
 
-  console.log(rows.length)
-  console.log(columns.length)
-  console.log(boxes.length)
-
   this.solve = function (x, y, value) {
     var cell = puzzle[x][y]
     return cell.solve(value)
