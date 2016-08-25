@@ -15,12 +15,12 @@ var TileFactory = {
   },
 
   unsolved: function (parentID, eventCallback) {
-    var element = document.createElement('div')
-    element.classList.add('unsolved')
+    var tile = document.createElement('div')
+    tile.classList.add('unsolved')
     for (var i = 0; i < 3; i++) {
-      element.appendChild(row(parentID, i, eventCallback))
+      tile.appendChild(row(parentID, i, eventCallback))
     }
-    return element
+    return tile
   },
 
   userSolved: function (id, value, eventCallback) {
