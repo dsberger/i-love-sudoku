@@ -1,7 +1,6 @@
 function Cell (x, y) {
   this.id = `x${x}y${y}`
   this.touchedByUser = false
-
   var possibleValues = []
 
   for (var i = 1; i <= 9; i++) {
@@ -9,7 +8,7 @@ function Cell (x, y) {
   }
 
   this.solve = function (value) {
-    if (this.isSolved()) {
+    if (this.isSolved() && this.touchedByUser) {
       return false
     } else {
       possibleValues = [value]

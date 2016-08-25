@@ -24,6 +24,16 @@ describe('Cell', () => {
       expect(cell.solve(4)).to.equal(false)
       done()
     })
+
+    it('returns true if called on a cell that\'s been passively solved', (done) => {
+      var cell = new Cell(1, 2)
+      for (var i = 1; i < 9; i++) {
+        cell.remove(i)
+      }
+      expect(cell.isSolved()).to.equal(9)
+      expect(cell.solve(9)).to.equal(true)
+      done()
+    })
   })
 
   describe('#remove', () => {

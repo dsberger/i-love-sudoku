@@ -4,7 +4,6 @@ function BlockOfNine (cells) {
 function Cell (x, y) {
   this.id = `x${x}y${y}`
   this.touchedByUser = false
-
   var possibleValues = []
 
   for (var i = 1; i <= 9; i++) {
@@ -12,7 +11,7 @@ function Cell (x, y) {
   }
 
   this.solve = function (value) {
-    if (this.isSolved()) {
+    if (this.isSolved() && this.touchedByUser) {
       return false
     } else {
       possibleValues = [value]
@@ -124,46 +123,10 @@ function Model (controller) {
 
 var TileFactory = {
 
-  unsolved: function (parentID, eventCallback) {
-    var element = document.createElement('div')
-    element.classList.add('unsolved')
-    for (var i = 0; i < 3; i++) {
-      element.appendChild(this.row(parentID, i, eventCallback))
-    }
-    return element
-  },
-
-  userSolved: function (id, value, eventCallback) {
-    var tile = this.solved(id, value)
-    tile.classList.add('by-user')
+  appSolved: function (id, value, eventCallback) {
+    var tile = solved(id, value)
+    tile.classList.add('by-app')
     tile.addEventListener('click', eventCallback)
-    return tile
-  },
-
-  row: function (parentID, rowNumber, eventCallback) {
-    var minNumber = rowNumber * 3 + 1
-    var row = document.createElement('div')
-    row.classList.add('row')
-    for (var j = minNumber; j < minNumber + 3; j++) {
-      row.appendChild(this.numberSelector(parentID, j, eventCallback))
-    }
-    return row
-  },
-
-  numberSelector: function (parentID, value, eventCallback) {
-    var selector = document.createElement('div')
-    selector.classList.add('number')
-    selector.id = `${parentID}v${value}`
-    selector.innerText = value.toString()
-    selector.addEventListener('click', eventCallback)
-    return selector
-  },
-
-  solved: function (id, value) {
-    var tile = document.createElement('div')
-    tile.classList.add('solved')
-    tile.innerText = value
-    tile.id = `${id}v${value}`
     return tile
   },
 
@@ -174,12 +137,48 @@ var TileFactory = {
     return blankSelector
   },
 
-  appSolved: function (id, value, eventCallback) {
-    var tile = this.solved(id, value)
-    tile.classList.add('by-app')
+  unsolved: function (parentID, eventCallback) {
+    var tile = document.createElement('div')
+    tile.classList.add('unsolved')
+    for (var i = 0; i < 3; i++) {
+      tile.appendChild(row(parentID, i, eventCallback))
+    }
+    return tile
+  },
+
+  userSolved: function (id, value, eventCallback) {
+    var tile = solved(id, value)
+    tile.classList.add('by-user')
     tile.addEventListener('click', eventCallback)
     return tile
   }
+}
+
+function row (parentID, rowNumber, eventCallback) {
+  var minNumber = rowNumber * 3 + 1
+  var row = document.createElement('div')
+  row.classList.add('row')
+  for (var j = minNumber; j < minNumber + 3; j++) {
+    row.appendChild(numberSelector(parentID, j, eventCallback))
+  }
+  return row
+}
+
+function numberSelector (parentID, value, eventCallback) {
+  var selector = document.createElement('div')
+  selector.classList.add('number')
+  selector.id = `${parentID}v${value}`
+  selector.innerText = value.toString()
+  selector.addEventListener('click', eventCallback)
+  return selector
+}
+
+function solved (id, value) {
+  var tile = document.createElement('div')
+  tile.classList.add('solved')
+  tile.innerText = value
+  tile.id = `${id}v${value}`
+  return tile
 }
 
 function View (controller) {
