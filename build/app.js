@@ -185,7 +185,8 @@ function View (controller) {
   this.init = function () {
     var tiles = document.getElementsByClassName('tile')
     for (var i = 0; i < tiles.length; i++) {
-      tiles[i].appendChild(TileFactory.unsolved(tiles[i].id, userSolve))
+      var unsolvedTile = TileFactory.unsolved(tiles[i].id, userSolve)
+      tiles[i].appendChild(unsolvedTile)
     }
   }
 
