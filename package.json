@@ -4,7 +4,7 @@
   "description": "A live Sudoku solver in raw JS.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test",
+    "test": "mocha --compilers js:babel-core/register",
     "build": "npm run build:css && npm run build:html && npm run build:js",
     "build:css": "node-sass --output-style compressed src/styles/main.scss build/styles.css",
     "build:html": "pug src/views/index.pug -o build",
@@ -17,12 +17,15 @@
   "author": "Dan Berger <dsberger@gmail.com>",
   "license": "ISC",
   "devDependencies": {
+    "babel-core": "6.14.0",
+    "babel-preset-es2015": "6.14.0",
     "chai": "3.5.0",
     "mocha": "3.0.2",
     "node-sass": "3.8.0",
     "parallelshell": "2.0.0",
     "pug": "2.0.0-beta5",
     "pug-cli": "1.0.0-alpha6",
+    "rollup": "0.34.10",
     "rollup-watch": "2.5.0"
   }
 }

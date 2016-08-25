@@ -1,4 +1,15 @@
 function Controller () {
+  var viewQueue = []
+  var modelQueue = []
+
+  this.enqueue = function (params) {
+    viewQueue.push(params)
+  }
+
+  this.saveModel = function (model) {
+    this.model = model
+  }
+
   this.saveView = function (view) {
     this.view = view
   }

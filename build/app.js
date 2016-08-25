@@ -1,3 +1,133 @@
+function BlockOfNine (cells) {
+}
+
+function Cell (x, y) {
+  this.id = `x${x}y${y}`
+
+  var possibleValues = []
+
+  for (var i = 1; i <= 9; i++) {
+    possibleValues.push(i)
+  }
+
+  this.solve = function (value) {
+    if (this.isSolved()) {
+      return false
+    } else {
+      possibleValues = [value]
+      return true
+    }
+  }
+
+  this.remove = function (value) {
+    if (this.isSolved()) {
+      return false
+    } else {
+      return removeFromPossibleValues(value)
+    }
+  }
+
+  this.isSolved = function () {
+    if (possibleValues.length === 1) {
+      return possibleValues[0]
+    } else {
+      return false
+    }
+  }
+
+  function removeFromPossibleValues (value) {
+    var i = possibleValues.indexOf(value)
+    if (i === -1) {
+      return false
+    } else {
+      possibleValues.splice(i, 1)
+      return true
+    }
+  }
+}
+
+function Model (controller) {
+  var puzzle = createPuzzle()
+  var rows = createRows()
+  var columns = createColumns()
+  var boxes = createBoxes()
+
+  console.log(rows.length)
+  console.log(columns.length)
+  console.log(boxes.length)
+
+  this.solve = function (x, y, value) {
+    var cell = puzzle[x][y]
+    if (cell.solve(value)) {
+      var params = {
+        action: 'solve',
+        source: 'model',
+        id: cell.id,
+        value: value
+      }
+      controller.enqueue(params)
+    }
+  }
+
+  // SETUP FUNCTIONS
+
+  function createPuzzle () {
+    var matrix = []
+    for (var i = 0; i < 9; i++) {
+      var row = []
+      for (var j = 0; j < 9; j++) {
+        var cell = new Cell(i, j)
+        row.push(cell)
+      }
+      matrix.push(row)
+    }
+    return matrix
+  }
+
+  function createRows () {
+    var collection = []
+    for (var i = 0; i < 9; i++) {
+      var row = new BlockOfNine(puzzle[i])
+      collection.push(row)
+    }
+    return collection
+  }
+
+  function createColumns () {
+    var collection = []
+    for (var i = 0; i < 9; i++) {
+      var cells = []
+      for (var j = 0; j < 9; j++) {
+        cells.push(puzzle[j][i])
+      }
+      var column = new BlockOfNine(cells)
+      collection.push(column)
+    }
+    return collection
+  }
+
+  function createBoxes () {
+    var collection = []
+    for (var i = 0; i < 9; i += 3) {
+      for (var j = 0; j < 9; j += 3) {
+        var box = new BlockOfNine(getBox(i, j))
+        collection.push(box)
+      }
+    }
+    return collection
+  }
+
+  function getBox (x, y) {
+    var collection = []
+    for (var i = x; i < x + 3; i++) {
+      for (var j = y; j < y + 3; j++) {
+        collection.push(puzzle[i][j])
+      }
+    }
+    return collection
+  }
+}
+
 function View (controller) {
   this.init = function () {
     var tiles = document.getElementsByClassName('tile')
@@ -104,6 +234,17 @@ function View (controller) {
 }
 
 function Controller () {
+  var viewQueue = []
+  var modelQueue = []
+
+  this.enqueue = function (params) {
+    viewQueue.push(params)
+  }
+
+  this.saveModel = function (model) {
+    this.model = model
+  }
+
   this.saveView = function (view) {
     this.view = view
   }
@@ -116,7 +257,9 @@ function Controller () {
 }
 
 var C = new Controller()
+var M = new Model(C)
 var V = new View(C)
 
 V.init()
+C.saveModel(M)
 C.saveView(V)
