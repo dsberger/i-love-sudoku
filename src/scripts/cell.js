@@ -1,56 +1,61 @@
 function Cell (x, y) {
-  this.id = `x${x}y${y}`
-  var touchedByUser = false
-  var possibleValues = []
+  var id = `x${x}y${y}`
+  var solvedByUser = false
+  var solvedByApp = false
+  var solvedValue
+  var possibleValues = initializeValues()
 
-  for (var i = 1; i <= 9; i++) {
-    possibleValues.push(i)
+  this.userSolve = function (value) {
+    if (!isSolved() || solvedByApp) {
+      var params = solve(value)
+      params.action = 'userSolved'
+      solvedByUser = true
+      return params
+    }
   }
 
-  this.solve = function (value) {
-    if (!this.isSolved() || !touchedByUser) {
-      possibleValues = [value]
-      touchedByUser = true
-      return {
-        id: this.id,
-        action: 'userSolved',
-        value: value
-      }
+  this.appSolve = function (value) {
+    if (!isSolved()) {
+      var params = solve(value)
+      params.action = 'appSolved'
+      solvedByApp = true
+      return params
     }
   }
 
   this.remove = function (value) {
-    if (!this.isSolved()) {
-      var i = possibleValues.indexOf(value)
-      if (i !== -1) {
-        possibleValues.splice(i, i + 1)
-        return {
-          id: this.id,
-          value: value,
-          action: 'removed'
-        }
+    if (possibleValues.length === 1) { return }
+
+    var i = possibleValues.indexOf(value)
+    if (i !== -1) {
+      possibleValues.splice(i, i + 1)
+      return {
+        id: id,
+        value: value,
+        action: 'removed'
       }
     }
   }
 
-  this.isSolved = function () {
-    if (possibleValues.length === 1) {
-      return possibleValues[0]
-    } else {
-      return false
+  function solve (value) {
+    solvedValue = value
+    possibleValues = []
+    return {
+      id: id,
+      value: value
     }
   }
 
-  this.getPossibleValues = function () {
-    if (this.isSolved()) {
-      return false
-    } else {
-      return possibleValues
-    }
+  function isSolved () {
+    return !!solvedValue
   }
 
-  this.touchedByUser = function () {
-    return touchedByUser
+  function initializeValues () {
+    var collection = []
+    for (var i = 1; i <= 9; i++) {
+      collection.push(i)
+    }
+    return collection
   }
 }
 

@@ -1,27 +1,29 @@
 function BlockOfNine (cells) {
+  var unsolvedCells = cells
+  var solvedCells = []
 
-  this.isSolved = function () {
+  var values = {
+    1: false,
+    2: false,
+    3: false,
+    4: false,
+    5: false,
+    6: false,
+    7: false,
+    8: false,
+    9: false
   }
 
-  this.foundValues = function () {
-    var collection = []
-    cells.forEach((cell) => {
-      var value = cell.isSolved()
-      if (value) { collection.push(value) }
-    })
-    return collection
+  this.hit = function () {
+    var actions = []
+    return actions
   }
 
-  this.unfoundValues = function () {
-    var collection = []
-    var foundValues = this.foundValues()
-    for (var i = 1; i <= 9; i++) {
-      if (foundValues.indexOf(i) === -1) {
-        collection.push(i)
-      }
-    }
-    return collection
-  }
+  // Check to see if any new cells have been solved.
+  // If yes, remove that value from all remaining cells.
+  // For each unfound value, check unsolved cells to see if it's the last option for that value.
+  // Check if any unsolved Cells were solved.
+  // return actions
 }
 
 export default BlockOfNine

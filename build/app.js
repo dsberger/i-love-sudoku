@@ -1,82 +1,89 @@
 function BlockOfNine (cells) {
+  var unsolvedCells = cells
+  var solvedCells = []
 
-  this.isSolved = function () {
+  var values = {
+    1: false,
+    2: false,
+    3: false,
+    4: false,
+    5: false,
+    6: false,
+    7: false,
+    8: false,
+    9: false
   }
 
-  this.foundValues = function () {
-    var collection = []
-    cells.forEach((cell) => {
-      var value = cell.isSolved()
-      if (value) { collection.push(value) }
-    })
-    return collection
+  this.hit = function () {
+    var actions = []
+    return actions
   }
 
-  this.unfoundValues = function () {
-    var collection = []
-    var foundValues = this.foundValues()
-    for (var i = 1; i <= 9; i++) {
-      if (foundValues.indexOf(i) === -1) {
-        collection.push(i)
-      }
-    }
-    return collection
-  }
+  // Check to see if any new cells have been solved.
+  // If yes, remove that value from all remaining cells.
+  // For each unfound value, check unsolved cells to see if it's the last option for that value.
+  // Check if any unsolved Cells were solved.
+  // return actions
 }
 
 function Cell (x, y) {
-  this.id = `x${x}y${y}`
-  var touchedByUser = false
-  var possibleValues = []
+  var id = `x${x}y${y}`
+  var solvedByUser = false
+  var solvedByApp = false
+  var solvedValue
+  var possibleValues = initializeValues()
 
-  for (var i = 1; i <= 9; i++) {
-    possibleValues.push(i)
+  this.userSolve = function (value) {
+    if (!isSolved() || solvedByApp) {
+      var params = solve(value)
+      params.action = 'userSolved'
+      solvedByUser = true
+      return params
+    }
   }
 
-  this.solve = function (value) {
-    if (!this.isSolved() || !touchedByUser) {
-      possibleValues = [value]
-      touchedByUser = true
-      return {
-        id: this.id,
-        action: 'userSolved',
-        value: value
-      }
+  this.appSolve = function (value) {
+    if (!isSolved()) {
+      var params = solve(value)
+      params.action = 'appSolved'
+      solvedByApp = true
+      return params
     }
   }
 
   this.remove = function (value) {
-    if (!this.isSolved()) {
-      var i = possibleValues.indexOf(value)
-      if (i !== -1) {
-        possibleValues.splice(i, i + 1)
-        return {
-          id: this.id,
-          value: value,
-          action: 'removed'
-        }
+    if (possibleValues.length === 1) { return }
+
+    var i = possibleValues.indexOf(value)
+    if (i !== -1) {
+      possibleValues.splice(i, i + 1)
+      return {
+        id: id,
+        value: value,
+        action: 'removed'
       }
     }
   }
 
-  this.isSolved = function () {
-    if (possibleValues.length === 1) {
-      return possibleValues[0]
-    } else {
-      return false
+  function solve (value) {
+    solvedValue = value
+    possibleValues = []
+    return {
+      id: id,
+      value: value
     }
   }
 
-  this.getPossibleValues = function () {
-    if (this.isSolved()) {
-      return false
-    } else {
-      return possibleValues
-    }
+  function isSolved () {
+    return !!solvedValue
   }
 
-  this.touchedByUser = function () {
-    return touchedByUser
+  function initializeValues () {
+    var collection = []
+    for (var i = 1; i <= 9; i++) {
+      collection.push(i)
+    }
+    return collection
   }
 }
 
@@ -88,7 +95,7 @@ function Model (controller) {
 
   this.solve = function (x, y, value) {
     var cell = puzzle[x][y]
-    controller.makeViewChange(cell.solve(value))
+    controller.makeViewChange(cell.userSolve(value))
   }
 
   // SETUP FUNCTIONS

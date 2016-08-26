@@ -11,58 +11,36 @@ function nineNewCells () {
 }
 
 describe('BlockOfNine', () => {
-  describe('#isSolved', () => {
-    it('is false when created', (done) => {
-      var cells = nineNewCells()
-      var block = new BlockOfNine(cells)
-      expect(block.isSolved()).to.equal(false)
-    })
-  })
-
-  describe('unfoundValues', () => {
-    it('is full upon creation', (done) => {
-      var cells = nineNewCells()
-      var block = new BlockOfNine(cells)
-      expect(block.unfoundValues()).to.deep.equal([1, 2, 3, 4, 5, 6, 7, 8, 9])
+  describe('hit', () => {
+    it('returns an array', (done) => {
+      var blockOfNine = new BlockOfNine(nineNewCells())
+      expect(blockOfNine.hit()).to.be.a('array')
       done()
     })
 
-    it('is missing the values that have been solved', (done) => {
+    it('returns eight actions if one cell has been actively solved', (done) => {
       var cells = nineNewCells()
-      var block = new BlockOfNine(cells)
+      var blockOfNine = new BlockOfNine(cells)
       cells[0].solve(1)
-      cells[1].solve(2)
-      cells[2].solve(3)
-      expect(block.unfoundValues()).to.deep.equal([4, 5, 6, 7, 8, 9])
+      var actions = blockOfNine.hit()
+      expect(actions.length).to.equal(8)
+      expect(actions[0].action).to.equal('removed')
+      expect(actions[0].value).to.equal(1)
       done()
     })
 
-    it('is empty when all cells have been solved', (done) => {
+    it('returns one action if one cell has been passively solved by being the last of its value', (done) => {
       var cells = nineNewCells()
-      var block = new BlockOfNine(cells)
-      for (var i = 0; i < 9; i++) {
-        cells[i].solve(i+1)
+      var blockOfNine = new BlockOfNine(cells)
+
+      for (var i = 0; i < 8; i++) {
+        cells[i].remove(4)
       }
-      expect(block.unfoundValues()).to.deep.equal([])
-      done()
-    })
-  })
 
-  describe('foundValues', () => {
-    it('is empty upon creation', (done) => {
-      var cells = nineNewCells()
-      var block = new BlockOfNine(cells)
-      expect(block.foundValues()).to.deep.equal([])
-      done()
-    })
-
-    it('contains the values of cells that have been solved', (done) => {
-      var cells = nineNewCells()
-      var block = new BlockOfNine(cells)
-      cells[0].solve(1)
-      cells[1].solve(2)
-      cells[2].solve(3)
-      expect(block.foundValues()).to.deep.equal([1, 2, 3])
+      var actions = blockOfNine.hit()
+      expect(actions.length).to.equal(1)
+      expect(actions[0].action).to.equal('appSolved')
+      expect(actions[0].value).to.equal(4)
       done()
     })
   })
