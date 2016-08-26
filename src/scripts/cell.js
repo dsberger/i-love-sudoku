@@ -1,6 +1,5 @@
 function Cell (x, y) {
   var id = `x${x}y${y}`
-  var solvedByUser = false
   var solvedByApp = false
   var solvedValue
   var possibleValues = initializeValues()
@@ -9,7 +8,6 @@ function Cell (x, y) {
     if (!this.isSolved() || solvedByApp) {
       var params = solve(value)
       params.action = 'userSolved'
-      solvedByUser = true
       return params
     }
   }
@@ -28,7 +26,7 @@ function Cell (x, y) {
 
     var i = possibleValues.indexOf(value)
     if (i !== -1) {
-      possibleValues.splice(i, i + 1)
+      possibleValues.splice(i, 1)
       return {
         id: id,
         value: value,

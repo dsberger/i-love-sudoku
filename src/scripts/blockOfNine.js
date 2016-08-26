@@ -23,8 +23,8 @@ function BlockOfNine (cells) {
   this.hit = function () {
     actions = []
     cleanUpSolvedCells()
-    removeFoundValuesFromUnsolvedCells()
     huntForPassivelySolvedCells()
+    removeFoundValuesFromUnsolvedCells()
     huntForLastRemainingUnfoundValues()
     return actions
   }
