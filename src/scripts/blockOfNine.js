@@ -1,5 +1,5 @@
 function BlockOfNine (cells) {
-  var unsolvedCells = cells
+  var unsolvedCells = cells.slice()
   var solvedCells = []
 
   var values = {
@@ -23,8 +23,8 @@ function BlockOfNine (cells) {
   this.hit = function () {
     actions = []
     cleanUpSolvedCells()
-    huntForPassivelySolvedCells()
     removeFoundValuesFromUnsolvedCells()
+    huntForPassivelySolvedCells()
     huntForLastRemainingUnfoundValues()
     return actions
   }

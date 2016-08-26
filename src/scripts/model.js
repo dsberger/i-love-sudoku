@@ -2,14 +2,45 @@ import BlockOfNine from './blockOfNine'
 import Cell from './cell'
 
 function Model (controller) {
+  var controllerQueue = []
   var puzzle = createPuzzle()
+
   var rows = createRows()
   var columns = createColumns()
   var boxes = createBoxes()
+  var blocks = rows.concat(columns).concat(boxes)
+
+  // CALLED BY CONTROLLER
 
   this.solve = function (x, y, value) {
+    console.log(`model y: ${y}`)
     var cell = puzzle[x][y]
-    controller.makeViewChange(cell.userSolve(value))
+    controllerQueue.push(cell.userSolve(value))
+  }
+
+  // PUZZLE SOLVING CONTROLS
+
+  var solving = window.setInterval(() => {
+    solveCycle()
+  }, 0)
+
+  function solveCycle () {
+    blocks.forEach((block) => {
+      var blockActions = block.hit()
+      controllerQueue = controllerQueue.concat(blockActions)
+    })
+  }
+
+  // DEQUEUEING ACTIONS FOR CONTROLLER
+
+  var queueClearing = window.setInterval(() => {
+    dequeue()
+  }, 0)
+
+  function dequeue () {
+    if (controllerQueue.length > 0) {
+      controller.makeViewChange(controllerQueue.shift())
+    }
   }
 
   // SETUP FUNCTIONS

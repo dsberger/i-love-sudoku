@@ -4,7 +4,7 @@ function Controller () {
 
   var queueClearing = window.setInterval(() => {
     dequeue()
-  }, 100)
+  }, 0)
 
   function dequeue () {
     if (viewQueue.length > 0) {
@@ -48,12 +48,12 @@ function Controller () {
   }
 
   function appSolve (id, value) {
-    this.view.changeToAppSolved(id, value)
+    controller.view.changeToAppSolved(id, value)
   }
 
   function snipNumberSelector (id, value) {
     var combinedID = `${id}v${value}`
-    this.view.snipNumberSelector(combinedID)
+    controller.view.snipNumberSelector(combinedID)
   }
 
   // A COUPLE INIT FUNCTIONS

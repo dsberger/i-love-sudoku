@@ -1,5 +1,5 @@
 function BlockOfNine (cells) {
-  var unsolvedCells = cells
+  var unsolvedCells = cells.slice()
   var solvedCells = []
 
   var values = {
@@ -23,8 +23,8 @@ function BlockOfNine (cells) {
   this.hit = function () {
     actions = []
     cleanUpSolvedCells()
-    huntForPassivelySolvedCells()
     removeFoundValuesFromUnsolvedCells()
+    huntForPassivelySolvedCells()
     huntForLastRemainingUnfoundValues()
     return actions
   }
@@ -176,14 +176,45 @@ function Cell (x, y) {
 }
 
 function Model (controller) {
+  var controllerQueue = []
   var puzzle = createPuzzle()
+
   var rows = createRows()
   var columns = createColumns()
   var boxes = createBoxes()
+  var blocks = rows.concat(columns).concat(boxes)
+
+  // CALLED BY CONTROLLER
 
   this.solve = function (x, y, value) {
+    console.log(`model y: ${y}`)
     var cell = puzzle[x][y]
-    controller.makeViewChange(cell.userSolve(value))
+    controllerQueue.push(cell.userSolve(value))
+  }
+
+  // PUZZLE SOLVING CONTROLS
+
+  var solving = window.setInterval(() => {
+    solveCycle()
+  }, 0)
+
+  function solveCycle () {
+    blocks.forEach((block) => {
+      var blockActions = block.hit()
+      controllerQueue = controllerQueue.concat(blockActions)
+    })
+  }
+
+  // DEQUEUEING ACTIONS FOR CONTROLLER
+
+  var queueClearing = window.setInterval(() => {
+    dequeue()
+  }, 0)
+
+  function dequeue () {
+    if (controllerQueue.length > 0) {
+      controller.makeViewChange(controllerQueue.shift())
+    }
   }
 
   // SETUP FUNCTIONS
@@ -358,7 +389,7 @@ function Controller () {
 
   var queueClearing = window.setInterval(() => {
     dequeue()
-  }, 100)
+  }, 0)
 
   function dequeue () {
     if (viewQueue.length > 0) {
@@ -402,12 +433,12 @@ function Controller () {
   }
 
   function appSolve (id, value) {
-    this.view.changeToAppSolved(id, value)
+    controller.view.changeToAppSolved(id, value)
   }
 
   function snipNumberSelector (id, value) {
     var combinedID = `${id}v${value}`
-    this.view.snipNumberSelector(combinedID)
+    controller.view.snipNumberSelector(combinedID)
   }
 
   // A COUPLE INIT FUNCTIONS
