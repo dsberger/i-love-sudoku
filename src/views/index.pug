@@ -4,5 +4,12 @@ html(lang="en")
     title I Love Sudoku
     link(href="styles.css" rel="stylesheet")
   body
-    include ./puzzle.pug
+    #container
+      include ./puzzle.pug
+      #sidebar
+        h2 I Love Sudoku
+        p Click on the numbers in the boxes and watch as the puzzle solves itself!
+        p It consistently is able to solve "Easy" and "Medium" puzzles from 
+          a(href="http://www.websudoku.com") Web Sudoku
+          | , and about 2/3 of "Hard" puzzles.
     script(src="app.js")

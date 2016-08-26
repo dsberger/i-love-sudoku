@@ -7,6 +7,9 @@ $tile-size: $cell-size * 3;
 $box-size: ($tile-size + $tile-border-width * 2) * 3;
 $puzzle-size: ($box-size + $box-border-width * 2) * 3;
 
+$sidebar-width: 300px;
+$container-width: $puzzle-size + $sidebar-width + 30px;
+
 $app-only-font-color: #808080;
 $user-action-font-color: #000000;
 $font-size-factor: 0.8;

@@ -3,7 +3,8 @@
 .puzzle {
   @include standard-border($puzzle-border-width);
   @include square($puzzle-size);
-  margin: 0 auto;
+  margin: 0;
+  float: left;
 
   .row {
     height: $box-size;

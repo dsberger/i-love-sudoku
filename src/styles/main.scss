@@ -1,3 +1,10 @@
 @import 'puzzle';
 @import 'box';
 @import 'solved-and-unsolved';
+@import 'sidebar';
+@import 'variables';
+
+#container {
+  margin: 0 auto;
+  width: $container-width
+}
