@@ -107,4 +107,84 @@ describe('Cell', () => {
       done()
     })
   })
+
+  describe('#isSolved', () => {
+    it('returns false before a cell has been solved', (done) => {
+      var cell = new Cell(1, 2)
+      expect(cell.isSolved()).to.equal(false)
+      done()
+    })
+
+    it('returns true after a cell has been solved', (done) => {
+      var cell = new Cell(1, 2)
+      cell.userSolve(4)
+      expect(cell.isSolved()).to.equal(true)
+      done()
+    })
+  })
+
+  describe('#getSolvedValue', () => {
+    it('returns undefined before a cell has been solved', (done) => {
+      var cell = new Cell(1, 2)
+      expect(cell.getSolvedValue()).to.equal(undefined)
+      done()
+    })
+
+    it('returns the solved value after a cell has been solved', (done) => {
+      var cell = new Cell(1, 2)
+      cell.userSolve(5)
+      expect(cell.getSolvedValue()).to.equal(5)
+      done()
+    })
+  })
+
+  describe('#couldBe', () => {
+    it('returns true if the given value is still a possible solved value', (done) => {
+      var cell = new Cell(1, 2)
+      expect(cell.couldBe(1)).to.equal(true)
+      done()
+    })
+
+    it('returns true if the given value is the last possible value', (done) => {
+      var cell = new Cell(1, 2)
+      for (var i = 2; i <= 9; i++) {
+        cell.remove(i)
+      }
+      expect(cell.couldBe(1)).to.equal(true)
+      done()
+    })
+
+    it('returns false if that value has been removed', (done) => {
+      var cell = new Cell(1, 2)
+      cell.remove(3)
+      expect(cell.couldBe(3)).to.equal(false)
+      done()
+    })
+  })
+
+  describe('#lastPossibleValue', () => {
+    it('returns undefined in a new cell', (done) => {
+      var cell = new Cell(1, 2)
+      expect(cell.lastPossibleValue()).to.equal(undefined)
+      done()
+    })
+
+    it('returns undefined when two or more possible values remain', (done) => {
+      var cell = new Cell(1, 2)
+      for (var i = 1; i < 8; i++) {
+        cell.remove(i)
+      }
+      expect(cell.lastPossibleValue()).to.equal(undefined)
+      done()
+    })
+
+    it('returns a value when all others have been cleared', (done) => {
+      var cell = new Cell(1, 2)
+      for (var i = 1; i < 9; i++) {
+        cell.remove(i)
+      }
+      expect(cell.lastPossibleValue()).to.equal(9)
+      done()
+    })
+  })
 })

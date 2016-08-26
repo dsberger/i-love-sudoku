@@ -14,16 +14,90 @@ function BlockOfNine (cells) {
     9: false
   }
 
+  var actions = []
+
+  function addToActions (params) {
+    if (params) { actions.push(params) }
+  }
+
   this.hit = function () {
-    var actions = []
+    actions = []
+    cleanUpSolvedCells()
+    huntForPassivelySolvedCells()
+    removeFoundValuesFromUnsolvedCells()
+    huntForLastRemainingUnfoundValues()
     return actions
   }
 
-  // Check to see if any new cells have been solved.
-  // If yes, remove that value from all remaining cells.
-  // For each unfound value, check unsolved cells to see if it's the last option for that value.
-  // Check if any unsolved Cells were solved.
-  // return actions
+  function cleanUpSolvedCells () {
+    for (var i = unsolvedCells.length - 1; i >= 0; i--) {
+      if (unsolvedCells[i].isSolved()) {
+        var cell = unsolvedCells.splice(i, 1)[0]
+        values[cell.getSolvedValue()] = true
+        solvedCells.push(cell)
+      }
+    }
+  }
+
+  function huntForPassivelySolvedCells () {
+    unsolvedCells.forEach((cell) => {
+      var lastPossibleValue = cell.lastPossibleValue()
+      if (lastPossibleValue) {
+        var params = cell.appSolve(lastPossibleValue)
+        addToActions(params)
+      }
+    })
+    cleanUpSolvedCells()
+  }
+
+  function removeFoundValuesFromUnsolvedCells () {
+    var found = foundValues()
+    found.forEach((value) => {
+      unsolvedCells.forEach((cell) => {
+        var params = cell.remove(value)
+        addToActions(params)
+      })
+    })
+  }
+
+  function huntForLastRemainingUnfoundValues () {
+    var unfound = unfoundValues()
+    unfound.forEach((value) => {
+      var mightBeThisValue = []
+
+      unsolvedCells.forEach((cell, index) => {
+        if (cell.couldBe(value)) {
+          mightBeThisValue.push(cell)
+        }
+      })
+
+      if (mightBeThisValue.length === 1) {
+        var params = mightBeThisValue[0].appSolve(value)
+        addToActions(params)
+      }
+    })
+    cleanUpSolvedCells()
+  }
+
+  function foundValues () {
+    var found = []
+    for (var number in values) {
+      if (values[number]) {
+        found.push(parseInt(number, 10))
+      }
+    }
+    return found
+  }
+
+  function unfoundValues () {
+    var unfound = []
+    for (var number in values) {
+      if (!values[number]) {
+        unfound.push(parseInt(number, 10))
+      }
+    }
+    return unfound
+  }
 }
 
 function Cell (x, y) {
@@ -34,7 +108,7 @@ function Cell (x, y) {
   var possibleValues = initializeValues()
 
   this.userSolve = function (value) {
-    if (!isSolved() || solvedByApp) {
+    if (!this.isSolved() || solvedByApp) {
       var params = solve(value)
       params.action = 'userSolved'
       solvedByUser = true
@@ -43,7 +117,7 @@ function Cell (x, y) {
   }
 
   this.appSolve = function (value) {
-    if (!isSolved()) {
+    if (!this.isSolved()) {
       var params = solve(value)
       params.action = 'appSolved'
       solvedByApp = true
@@ -74,8 +148,22 @@ function Cell (x, y) {
     }
   }
 
-  function isSolved () {
+  this.isSolved = function () {
     return !!solvedValue
+  }
+
+  this.getSolvedValue = function () {
+    return solvedValue
+  }
+
+  this.lastPossibleValue = function () {
+    if (possibleValues.length === 1) {
+      return possibleValues[0]
+    }
+  }
+
+  this.couldBe = function (value) {
+    return (possibleValues.indexOf(value) !== -1)
   }
 
   function initializeValues () {

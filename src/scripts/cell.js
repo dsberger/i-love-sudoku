@@ -6,7 +6,7 @@ function Cell (x, y) {
   var possibleValues = initializeValues()
 
   this.userSolve = function (value) {
-    if (!isSolved() || solvedByApp) {
+    if (!this.isSolved() || solvedByApp) {
       var params = solve(value)
       params.action = 'userSolved'
       solvedByUser = true
@@ -15,7 +15,7 @@ function Cell (x, y) {
   }
 
   this.appSolve = function (value) {
-    if (!isSolved()) {
+    if (!this.isSolved()) {
       var params = solve(value)
       params.action = 'appSolved'
       solvedByApp = true
@@ -46,8 +46,22 @@ function Cell (x, y) {
     }
   }
 
-  function isSolved () {
+  this.isSolved = function () {
     return !!solvedValue
+  }
+
+  this.getSolvedValue = function () {
+    return solvedValue
+  }
+
+  this.lastPossibleValue = function () {
+    if (possibleValues.length === 1) {
+      return possibleValues[0]
+    }
+  }
+
+  this.couldBe = function (value) {
+    return (possibleValues.indexOf(value) !== -1)
   }
 
   function initializeValues () {
