@@ -1,6 +1,6 @@
 function Cell (x, y) {
   this.id = `x${x}y${y}`
-  this.touchedByUser = false
+  var touchedByUser = false
   var possibleValues = []
 
   for (var i = 1; i <= 9; i++) {
@@ -8,20 +8,28 @@ function Cell (x, y) {
   }
 
   this.solve = function (value) {
-    if (this.isSolved() && this.touchedByUser) {
-      return false
-    } else {
+    if (!this.isSolved() || !touchedByUser) {
       possibleValues = [value]
-      this.touchedByUser = true
-      return true
+      touchedByUser = true
+      return {
+        id: this.id,
+        action: 'userSolved',
+        value: value
+      }
     }
   }
 
   this.remove = function (value) {
-    if (this.isSolved()) {
-      return false
-    } else {
-      return removeFromPossibleValues(value)
+    if (!this.isSolved()) {
+      var i = possibleValues.indexOf(value)
+      if (i !== -1) {
+        possibleValues.splice(i, i + 1)
+        return {
+          id: this.id,
+          value: value,
+          action: 'removed'
+        }
+      }
     }
   }
 
@@ -33,14 +41,16 @@ function Cell (x, y) {
     }
   }
 
-  function removeFromPossibleValues (value) {
-    var i = possibleValues.indexOf(value)
-    if (i === -1) {
+  this.getPossibleValues = function () {
+    if (this.isSolved()) {
       return false
     } else {
-      possibleValues.splice(i, 1)
-      return true
+      return possibleValues
     }
+  }
+
+  this.touchedByUser = function () {
+    return touchedByUser
   }
 }
 

@@ -1,32 +1,69 @@
 function Controller () {
+  var viewQueue = []
+  var controller = this
+
+  var queueClearing = window.setInterval(() => {
+    dequeue()
+  }, 100)
+
+  function dequeue () {
+    if (viewQueue.length > 0) {
+      performViewAction(viewQueue.shift())
+    }
+  }
+
+  function performViewAction (params) {
+    switch (params.action) {
+      case 'userSolved':
+        userSolveView(params.id, params.value)
+        break
+      case 'appSolved':
+        appSolve(params.id, params.value)
+        break
+      case 'removed':
+        snipNumberSelector(params.id, params.value)
+        break
+    }
+  }
+
+  // MODEL CHANGE, CALLED BY DOM
+
+  this.userSolveModel = function (numberSelectorID) {
+    var x = numberSelectorID.slice(1, 2)
+    var y = numberSelectorID.slice(3, 4)
+    var value = numberSelectorID.slice(5)
+    this.model.solve(x, y, value)
+  }
+
+  // VIEW CHANGE, CALLED BY MODEL
+
+  this.makeViewChange = function (params) {
+    if (params) { viewQueue.push(params) }
+  }
+
+  // DOM CHANGES, CALLED BY DEQUEUER
+
+  function userSolveView (id, value) {
+    controller.view.changeToUserSolved(id, value)
+  }
+
+  function appSolve (id, value) {
+    this.view.changeToAppSolved(id, value)
+  }
+
+  function snipNumberSelector (id, value) {
+    var combinedID = `${id}v${value}`
+    this.view.snipNumberSelector(combinedID)
+  }
+
+  // A COUPLE INIT FUNCTIONS
+
   this.saveModel = function (model) {
     this.model = model
   }
 
   this.saveView = function (view) {
     this.view = view
-  }
-
-  // DOM AND MODEL CHANGE, CALLED BY DOM
-  this.userSolve = function (numberSelectorID) {
-    var id = numberSelectorID.slice(0, 4)
-    var x = numberSelectorID.slice(1, 2)
-    var y = numberSelectorID.slice(3, 4)
-    var value = numberSelectorID.slice(5)
-    if (this.model.solve(x, y, value)) {
-      this.view.changeToUserSolved(id, value)
-    }
-  }
-
-  // DOM CHANGES, CALLED BY MODEL
-
-  this.appSolve = function (id, value) {
-    this.view.changeToAppSolved(id, value)
-  }
-
-  this.snipNumberSelector = function (id, value) {
-    var combinedID = `${id}v${value}`
-    this.view.snipNumberSelector(combinedID)
   }
 }
 

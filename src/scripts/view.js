@@ -43,7 +43,7 @@ function View (controller) {
   }
 
   function userSolve () {
-    controller.userSolve(this.id)
+    controller.userSolveModel(this.id)
   }
 }
 

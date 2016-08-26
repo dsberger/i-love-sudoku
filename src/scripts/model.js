@@ -9,7 +9,7 @@ function Model (controller) {
 
   this.solve = function (x, y, value) {
     var cell = puzzle[x][y]
-    return cell.solve(value)
+    controller.makeViewChange(cell.solve(value))
   }
 
   // SETUP FUNCTIONS

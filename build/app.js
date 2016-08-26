@@ -1,9 +1,32 @@
 function BlockOfNine (cells) {
+
+  this.isSolved = function () {
+  }
+
+  this.foundValues = function () {
+    var collection = []
+    cells.forEach((cell) => {
+      var value = cell.isSolved()
+      if (value) { collection.push(value) }
+    })
+    return collection
+  }
+
+  this.unfoundValues = function () {
+    var collection = []
+    var foundValues = this.foundValues()
+    for (var i = 1; i <= 9; i++) {
+      if (foundValues.indexOf(i) === -1) {
+        collection.push(i)
+      }
+    }
+    return collection
+  }
 }
 
 function Cell (x, y) {
   this.id = `x${x}y${y}`
-  this.touchedByUser = false
+  var touchedByUser = false
   var possibleValues = []
 
   for (var i = 1; i <= 9; i++) {
@@ -11,20 +34,28 @@ function Cell (x, y) {
   }
 
   this.solve = function (value) {
-    if (this.isSolved() && this.touchedByUser) {
-      return false
-    } else {
+    if (!this.isSolved() || !touchedByUser) {
       possibleValues = [value]
-      this.touchedByUser = true
-      return true
+      touchedByUser = true
+      return {
+        id: this.id,
+        action: 'userSolved',
+        value: value
+      }
     }
   }
 
   this.remove = function (value) {
-    if (this.isSolved()) {
-      return false
-    } else {
-      return removeFromPossibleValues(value)
+    if (!this.isSolved()) {
+      var i = possibleValues.indexOf(value)
+      if (i !== -1) {
+        possibleValues.splice(i, i + 1)
+        return {
+          id: this.id,
+          value: value,
+          action: 'removed'
+        }
+      }
     }
   }
 
@@ -36,14 +67,16 @@ function Cell (x, y) {
     }
   }
 
-  function removeFromPossibleValues (value) {
-    var i = possibleValues.indexOf(value)
-    if (i === -1) {
+  this.getPossibleValues = function () {
+    if (this.isSolved()) {
       return false
     } else {
-      possibleValues.splice(i, 1)
-      return true
+      return possibleValues
     }
+  }
+
+  this.touchedByUser = function () {
+    return touchedByUser
   }
 }
 
@@ -55,7 +88,7 @@ function Model (controller) {
 
   this.solve = function (x, y, value) {
     var cell = puzzle[x][y]
-    return cell.solve(value)
+    controller.makeViewChange(cell.solve(value))
   }
 
   // SETUP FUNCTIONS
@@ -220,39 +253,76 @@ function View (controller) {
   }
 
   function userSolve () {
-    controller.userSolve(this.id)
+    controller.userSolveModel(this.id)
   }
 }
 
 function Controller () {
+  var viewQueue = []
+  var controller = this
+
+  var queueClearing = window.setInterval(() => {
+    dequeue()
+  }, 100)
+
+  function dequeue () {
+    if (viewQueue.length > 0) {
+      performViewAction(viewQueue.shift())
+    }
+  }
+
+  function performViewAction (params) {
+    switch (params.action) {
+      case 'userSolved':
+        userSolveView(params.id, params.value)
+        break
+      case 'appSolved':
+        appSolve(params.id, params.value)
+        break
+      case 'removed':
+        snipNumberSelector(params.id, params.value)
+        break
+    }
+  }
+
+  // MODEL CHANGE, CALLED BY DOM
+
+  this.userSolveModel = function (numberSelectorID) {
+    var x = numberSelectorID.slice(1, 2)
+    var y = numberSelectorID.slice(3, 4)
+    var value = numberSelectorID.slice(5)
+    this.model.solve(x, y, value)
+  }
+
+  // VIEW CHANGE, CALLED BY MODEL
+
+  this.makeViewChange = function (params) {
+    if (params) { viewQueue.push(params) }
+  }
+
+  // DOM CHANGES, CALLED BY DEQUEUER
+
+  function userSolveView (id, value) {
+    controller.view.changeToUserSolved(id, value)
+  }
+
+  function appSolve (id, value) {
+    this.view.changeToAppSolved(id, value)
+  }
+
+  function snipNumberSelector (id, value) {
+    var combinedID = `${id}v${value}`
+    this.view.snipNumberSelector(combinedID)
+  }
+
+  // A COUPLE INIT FUNCTIONS
+
   this.saveModel = function (model) {
     this.model = model
   }
 
   this.saveView = function (view) {
     this.view = view
-  }
-
-  // DOM AND MODEL CHANGE, CALLED BY DOM
-  this.userSolve = function (numberSelectorID) {
-    var id = numberSelectorID.slice(0, 4)
-    var x = numberSelectorID.slice(1, 2)
-    var y = numberSelectorID.slice(3, 4)
-    var value = numberSelectorID.slice(5)
-    if (this.model.solve(x, y, value)) {
-      this.view.changeToUserSolved(id, value)
-    }
-  }
-
-  // DOM CHANGES, CALLED BY MODEL
-
-  this.appSolve = function (id, value) {
-    this.view.changeToAppSolved(id, value)
-  }
-
-  this.snipNumberSelector = function (id, value) {
-    var combinedID = `${id}v${value}`
-    this.view.snipNumberSelector(combinedID)
   }
 }
 
