@@ -12,6 +12,16 @@
       @include square($cell-size);
       @include text-centering($cell-size);
       float: left;
+
+      &:hover {
+        color: black;
+        background-image: radial-gradient(#ADD8E6, #FFF);
+      }
+    }
+
+    .blank {
+      @include square($cell-size);
+      float: left;
     }
   }
 }

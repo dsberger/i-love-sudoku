@@ -11,6 +11,7 @@
       @include standard-border($tile-border-width);
       @include square($tile-size);
       float: left;
+      cursor: pointer;
     }
   }
 }

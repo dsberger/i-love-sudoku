@@ -9,7 +9,7 @@ var TileFactory = {
 
   blankSelector: function () {
     var blankSelector = document.createElement('div')
-    blankSelector.classList.add('number')
+    blankSelector.classList.add('blank')
     blankSelector.innerText = ''
     return blankSelector
   },
