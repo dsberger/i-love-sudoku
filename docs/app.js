@@ -1,6 +1,8 @@
-function BlockOfNine (cells) {
-  var unsolvedCells = cells.slice()
-  var solvedCells = []
+'use strict';
+
+function BlockOfNine(cells) {
+  var unsolvedCells = cells.slice();
+  var solvedCells = [];
 
   var values = {
     1: false,
@@ -12,448 +14,454 @@ function BlockOfNine (cells) {
     7: false,
     8: false,
     9: false
-  }
+  };
 
-  var actions = []
+  var actions = [];
 
-  function addToActions (params) {
-    if (params) { actions.push(params) }
+  function addToActions(params) {
+    if (params) {
+      actions.push(params);
+    }
   }
 
   this.hit = function () {
-    actions = []
-    cleanUpSolvedCells()
-    huntForPassivelySolvedCells()
-    removeFoundValuesFromUnsolvedCells()
-    huntForLastRemainingUnfoundValues()
-    return actions
-  }
+    actions = [];
+    cleanUpSolvedCells();
+    huntForPassivelySolvedCells();
+    removeFoundValuesFromUnsolvedCells();
+    huntForLastRemainingUnfoundValues();
+    return actions;
+  };
 
-  function cleanUpSolvedCells () {
+  function cleanUpSolvedCells() {
     for (var i = unsolvedCells.length - 1; i >= 0; i--) {
       if (unsolvedCells[i].isSolved()) {
-        var cell = unsolvedCells.splice(i, 1)[0]
-        values[cell.getSolvedValue()] = true
-        solvedCells.push(cell)
+        var cell = unsolvedCells.splice(i, 1)[0];
+        values[cell.getSolvedValue()] = true;
+        solvedCells.push(cell);
       }
     }
   }
 
-  function huntForPassivelySolvedCells () {
-    unsolvedCells.forEach((cell) => {
-      var lastPossibleValue = cell.lastPossibleValue()
+  function huntForPassivelySolvedCells() {
+    unsolvedCells.forEach(function (cell) {
+      var lastPossibleValue = cell.lastPossibleValue();
       if (lastPossibleValue) {
-        var params = cell.appSolve(lastPossibleValue)
-        addToActions(params)
+        var params = cell.appSolve(lastPossibleValue);
+        addToActions(params);
       }
-    })
-    cleanUpSolvedCells()
+    });
+    cleanUpSolvedCells();
   }
 
-  function removeFoundValuesFromUnsolvedCells () {
-    var found = foundValues()
-    found.forEach((value) => {
-      unsolvedCells.forEach((cell) => {
-        var params = cell.remove(value)
-        addToActions(params)
-      })
-    })
+  function removeFoundValuesFromUnsolvedCells() {
+    var found = foundValues();
+    found.forEach(function (value) {
+      unsolvedCells.forEach(function (cell) {
+        var params = cell.remove(value);
+        addToActions(params);
+      });
+    });
   }
 
-  function huntForLastRemainingUnfoundValues () {
-    var unfound = unfoundValues()
-    unfound.forEach((value) => {
-      var mightBeThisValue = []
+  function huntForLastRemainingUnfoundValues() {
+    var unfound = unfoundValues();
+    unfound.forEach(function (value) {
+      var mightBeThisValue = [];
 
-      unsolvedCells.forEach((cell, index) => {
+      unsolvedCells.forEach(function (cell, index) {
         if (cell.couldBe(value)) {
-          mightBeThisValue.push(cell)
+          mightBeThisValue.push(cell);
         }
-      })
+      });
 
       if (mightBeThisValue.length === 1) {
-        var params = mightBeThisValue[0].appSolve(value)
-        addToActions(params)
+        var params = mightBeThisValue[0].appSolve(value);
+        addToActions(params);
       }
-    })
-    cleanUpSolvedCells()
+    });
+    cleanUpSolvedCells();
   }
 
-  function foundValues () {
-    var found = []
+  function foundValues() {
+    var found = [];
     for (var number in values) {
       if (values[number]) {
-        found.push(parseInt(number, 10))
+        found.push(parseInt(number, 10));
       }
     }
-    return found
+    return found;
   }
 
-  function unfoundValues () {
-    var unfound = []
+  function unfoundValues() {
+    var unfound = [];
     for (var number in values) {
       if (!values[number]) {
-        unfound.push(parseInt(number, 10))
+        unfound.push(parseInt(number, 10));
       }
     }
-    return unfound
+    return unfound;
   }
 }
 
-function Cell (x, y) {
-  var id = `x${x}y${y}`
-  var solvedByApp = false
-  var solvedValue
-  var possibleValues = initializeValues()
+function Cell(x, y) {
+  var id = 'x' + x + 'y' + y;
+  var solvedByApp = false;
+  var solvedValue;
+  var possibleValues = initializeValues();
 
   this.userSolve = function (value) {
     if (!this.isSolved() || solvedByApp) {
-      var params = solve(value)
-      params.action = 'userSolved'
-      return params
+      var params = solve(value);
+      params.action = 'userSolved';
+      return params;
     }
-  }
+  };
 
   this.appSolve = function (value) {
     if (!this.isSolved()) {
-      var params = solve(value)
-      params.action = 'appSolved'
-      solvedByApp = true
-      return params
+      var params = solve(value);
+      params.action = 'appSolved';
+      solvedByApp = true;
+      return params;
     }
-  }
+  };
 
   this.remove = function (value) {
-    if (possibleValues.length === 1) { return }
+    if (possibleValues.length === 1) {
+      return;
+    }
 
-    var i = possibleValues.indexOf(value)
+    var i = possibleValues.indexOf(value);
     if (i !== -1) {
-      possibleValues.splice(i, 1)
+      possibleValues.splice(i, 1);
       return {
         id: id,
         value: value,
         action: 'removed'
-      }
+      };
     }
-  }
+  };
 
-  function solve (value) {
-    solvedValue = value
-    possibleValues = []
+  function solve(value) {
+    solvedValue = value;
+    possibleValues = [];
     return {
       id: id,
       value: value
-    }
+    };
   }
 
   this.isSolved = function () {
-    return !!solvedValue
-  }
+    return !!solvedValue;
+  };
 
   this.getSolvedValue = function () {
-    return solvedValue
-  }
+    return solvedValue;
+  };
 
   this.lastPossibleValue = function () {
     if (possibleValues.length === 1) {
-      return possibleValues[0]
+      return possibleValues[0];
     }
-  }
+  };
 
   this.couldBe = function (value) {
-    return (possibleValues.indexOf(value) !== -1)
-  }
+    return possibleValues.indexOf(value) !== -1;
+  };
 
-  function initializeValues () {
-    var collection = []
+  function initializeValues() {
+    var collection = [];
     for (var i = 1; i <= 9; i++) {
-      collection.push(i)
+      collection.push(i);
     }
-    return collection
+    return collection;
   }
 }
 
-function Model (controller) {
-  var controllerQueue = []
-  var puzzle = createPuzzle()
+function Model(controller) {
+  var controllerQueue = [];
+  var puzzle = createPuzzle();
 
-  var rows = createRows()
-  var columns = createColumns()
-  var boxes = createBoxes()
-  var blocks = rows.concat(columns).concat(boxes)
+  var rows = createRows();
+  var columns = createColumns();
+  var boxes = createBoxes();
+  var blocks = rows.concat(columns).concat(boxes);
 
   // CALLED BY CONTROLLER
 
   this.solve = function (x, y, value) {
-    console.log(`model y: ${y}`)
-    var cell = puzzle[x][y]
-    controllerQueue.push(cell.userSolve(value))
-  }
+    console.log('model y: ' + y);
+    var cell = puzzle[x][y];
+    controllerQueue.push(cell.userSolve(value));
+  };
 
   // PUZZLE SOLVING CONTROLS
 
-  var solving = window.setInterval(() => {
-    solveCycle()
-  }, 0)
+  var solving = window.setInterval(function () {
+    solveCycle();
+  }, 0);
 
-  function solveCycle () {
-    blocks.forEach((block) => {
-      var blockActions = block.hit()
-      controllerQueue = controllerQueue.concat(blockActions)
-    })
+  function solveCycle() {
+    blocks.forEach(function (block) {
+      var blockActions = block.hit();
+      controllerQueue = controllerQueue.concat(blockActions);
+    });
   }
 
   // DEQUEUEING ACTIONS FOR CONTROLLER
 
-  var queueClearing = window.setInterval(() => {
-    dequeue()
-  }, 0)
+  var queueClearing = window.setInterval(function () {
+    dequeue();
+  }, 0);
 
-  function dequeue () {
+  function dequeue() {
     if (controllerQueue.length > 0) {
-      controller.makeViewChange(controllerQueue.shift())
+      controller.makeViewChange(controllerQueue.shift());
     }
   }
 
   // SETUP FUNCTIONS
 
-  function createPuzzle () {
-    var matrix = []
+  function createPuzzle() {
+    var matrix = [];
     for (var i = 0; i < 9; i++) {
-      var row = []
+      var row = [];
       for (var j = 0; j < 9; j++) {
-        var cell = new Cell(i, j)
-        row.push(cell)
+        var cell = new Cell(i, j);
+        row.push(cell);
       }
-      matrix.push(row)
+      matrix.push(row);
     }
-    return matrix
+    return matrix;
   }
 
-  function createRows () {
-    var collection = []
+  function createRows() {
+    var collection = [];
     for (var i = 0; i < 9; i++) {
-      var row = new BlockOfNine(puzzle[i])
-      collection.push(row)
+      var row = new BlockOfNine(puzzle[i]);
+      collection.push(row);
     }
-    return collection
+    return collection;
   }
 
-  function createColumns () {
-    var collection = []
+  function createColumns() {
+    var collection = [];
     for (var i = 0; i < 9; i++) {
-      var cells = []
+      var cells = [];
       for (var j = 0; j < 9; j++) {
-        cells.push(puzzle[j][i])
+        cells.push(puzzle[j][i]);
       }
-      var column = new BlockOfNine(cells)
-      collection.push(column)
+      var column = new BlockOfNine(cells);
+      collection.push(column);
     }
-    return collection
+    return collection;
   }
 
-  function createBoxes () {
-    var collection = []
+  function createBoxes() {
+    var collection = [];
     for (var i = 0; i < 9; i += 3) {
       for (var j = 0; j < 9; j += 3) {
-        var box = new BlockOfNine(getBox(i, j))
-        collection.push(box)
+        var box = new BlockOfNine(getBox(i, j));
+        collection.push(box);
       }
     }
-    return collection
+    return collection;
   }
 
-  function getBox (x, y) {
-    var collection = []
+  function getBox(x, y) {
+    var collection = [];
     for (var i = x; i < x + 3; i++) {
       for (var j = y; j < y + 3; j++) {
-        collection.push(puzzle[i][j])
+        collection.push(puzzle[i][j]);
       }
     }
-    return collection
+    return collection;
   }
 }
 
 var TileFactory = {
 
-  appSolved: function (id, value, eventCallback) {
-    var tile = solved(id, value)
-    tile.classList.add('by-app')
-    tile.addEventListener('click', eventCallback)
-    return tile
+  appSolved: function appSolved(id, value, eventCallback) {
+    var tile = solved(id, value);
+    tile.classList.add('by-app');
+    tile.addEventListener('click', eventCallback);
+    return tile;
   },
 
-  blankSelector: function () {
-    var blankSelector = document.createElement('div')
-    blankSelector.classList.add('blank')
-    blankSelector.innerText = ''
-    return blankSelector
+  blankSelector: function blankSelector() {
+    var blankSelector = document.createElement('div');
+    blankSelector.classList.add('blank');
+    blankSelector.innerText = '';
+    return blankSelector;
   },
 
-  unsolved: function (parentID, eventCallback) {
-    var tile = document.createElement('div')
-    tile.classList.add('unsolved')
+  unsolved: function unsolved(parentID, eventCallback) {
+    var tile = document.createElement('div');
+    tile.classList.add('unsolved');
     for (var i = 0; i < 3; i++) {
-      tile.appendChild(row(parentID, i, eventCallback))
+      tile.appendChild(row(parentID, i, eventCallback));
     }
-    return tile
+    return tile;
   },
 
-  userSolved: function (id, value, eventCallback) {
-    var tile = solved(id, value)
-    tile.classList.add('by-user')
-    tile.addEventListener('click', eventCallback)
-    return tile
+  userSolved: function userSolved(id, value, eventCallback) {
+    var tile = solved(id, value);
+    tile.classList.add('by-user');
+    tile.addEventListener('click', eventCallback);
+    return tile;
   }
-}
+};
 
-function row (parentID, rowNumber, eventCallback) {
-  var minNumber = rowNumber * 3 + 1
-  var row = document.createElement('div')
-  row.classList.add('row')
+function row(parentID, rowNumber, eventCallback) {
+  var minNumber = rowNumber * 3 + 1;
+  var row = document.createElement('div');
+  row.classList.add('row');
   for (var j = minNumber; j < minNumber + 3; j++) {
-    row.appendChild(numberSelector(parentID, j, eventCallback))
+    row.appendChild(numberSelector(parentID, j, eventCallback));
   }
-  return row
+  return row;
 }
 
-function numberSelector (parentID, value, eventCallback) {
-  var selector = document.createElement('div')
-  selector.classList.add('number')
-  selector.id = `${parentID}v${value}`
-  selector.innerText = value.toString()
-  selector.addEventListener('click', eventCallback)
-  return selector
+function numberSelector(parentID, value, eventCallback) {
+  var selector = document.createElement('div');
+  selector.classList.add('number');
+  selector.id = parentID + 'v' + value;
+  selector.innerText = value.toString();
+  selector.addEventListener('click', eventCallback);
+  return selector;
 }
 
-function solved (id, value) {
-  var tile = document.createElement('div')
-  tile.classList.add('solved')
-  tile.innerText = value
-  tile.id = `${id}v${value}`
-  return tile
+function solved(id, value) {
+  var tile = document.createElement('div');
+  tile.classList.add('solved');
+  tile.innerText = value;
+  tile.id = id + 'v' + value;
+  return tile;
 }
 
-function View (controller) {
+function View(controller) {
   this.init = function () {
-    var tiles = document.getElementsByClassName('tile')
+    var tiles = document.getElementsByClassName('tile');
     for (var i = 0; i < tiles.length; i++) {
-      var unsolvedTile = TileFactory.unsolved(tiles[i].id, userSolve)
-      tiles[i].appendChild(unsolvedTile)
+      var unsolvedTile = TileFactory.unsolved(tiles[i].id, userSolve);
+      tiles[i].appendChild(unsolvedTile);
     }
-  }
+  };
 
   // DOM MANIPULATORS
 
   this.changeToUserSolved = function (id, value) {
-    var tile = document.getElementById(id)
-    var userSolvedTile = TileFactory.userSolved(id, value, clearSolve)
-    tile.replaceChild(userSolvedTile, tile.firstChild)
-  }
+    var tile = document.getElementById(id);
+    var userSolvedTile = TileFactory.userSolved(id, value, clearSolve);
+    tile.replaceChild(userSolvedTile, tile.firstChild);
+  };
 
   this.changeToAppSolved = function (id, value) {
-    var tile = document.getElementById(id)
-    var appSolvedTile = TileFactory.appSolved(id, value, userSolve)
-    tile.replaceChild(appSolvedTile, tile.firstChild)
-  }
+    var tile = document.getElementById(id);
+    var appSolvedTile = TileFactory.appSolved(id, value, userSolve);
+    tile.replaceChild(appSolvedTile, tile.firstChild);
+  };
 
   this.changeToUnsolved = function (id) {
-    var tile = document.getElementById(id)
-    var unsolvedTile = TileFactory.unsolved(id, userSolve)
-    tile.replaceChild(unsolvedTile, tile.firstChild)
-  }
+    var tile = document.getElementById(id);
+    var unsolvedTile = TileFactory.unsolved(id, userSolve);
+    tile.replaceChild(unsolvedTile, tile.firstChild);
+  };
 
   this.snipNumberSelector = function (id) {
-    var numberSelector = document.getElementById(id)
-    var blankSelector = TileFactory.blankSelector()
-    var row = numberSelector.parentElement
-    row.replaceChild(blankSelector, numberSelector)
-  }
+    var numberSelector = document.getElementById(id);
+    var blankSelector = TileFactory.blankSelector();
+    var row = numberSelector.parentElement;
+    row.replaceChild(blankSelector, numberSelector);
+  };
 
   // TILE LISTENERS
 
-  function clearSolve () {
-    console.log('Clear solve doesn\'t work yet!')
+  function clearSolve() {
+    console.log('Clear solve doesn\'t work yet!');
   }
 
-  function userSolve () {
-    controller.userSolveModel(this.id)
+  function userSolve() {
+    controller.userSolveModel(this.id);
   }
 }
 
-function Controller () {
-  var viewQueue = []
-  var controller = this
+function Controller() {
+  var viewQueue = [];
+  var controller = this;
 
-  var queueClearing = window.setInterval(() => {
-    dequeue()
-  }, 0)
+  var queueClearing = window.setInterval(function () {
+    dequeue();
+  }, 0);
 
-  function dequeue () {
+  function dequeue() {
     if (viewQueue.length > 0) {
-      performViewAction(viewQueue.shift())
+      performViewAction(viewQueue.shift());
     }
   }
 
-  function performViewAction (params) {
+  function performViewAction(params) {
     switch (params.action) {
       case 'userSolved':
-        userSolveView(params.id, params.value)
-        break
+        userSolveView(params.id, params.value);
+        break;
       case 'appSolved':
-        appSolve(params.id, params.value)
-        break
+        appSolve(params.id, params.value);
+        break;
       case 'removed':
-        snipNumberSelector(params.id, params.value)
-        break
+        snipNumberSelector(params.id, params.value);
+        break;
     }
   }
 
   // MODEL CHANGE, CALLED BY DOM
 
   this.userSolveModel = function (numberSelectorID) {
-    var x = numberSelectorID.slice(1, 2)
-    var y = numberSelectorID.slice(3, 4)
-    var value = numberSelectorID.slice(5)
-    this.model.solve(x, y, value)
-  }
+    var x = numberSelectorID.slice(1, 2);
+    var y = numberSelectorID.slice(3, 4);
+    var value = numberSelectorID.slice(5);
+    this.model.solve(x, y, value);
+  };
 
   // VIEW CHANGE, CALLED BY MODEL
 
   this.makeViewChange = function (params) {
-    if (params) { viewQueue.push(params) }
-  }
+    if (params) {
+      viewQueue.push(params);
+    }
+  };
 
   // DOM CHANGES, CALLED BY DEQUEUER
 
-  function userSolveView (id, value) {
-    controller.view.changeToUserSolved(id, value)
+  function userSolveView(id, value) {
+    controller.view.changeToUserSolved(id, value);
   }
 
-  function appSolve (id, value) {
-    controller.view.changeToAppSolved(id, value)
+  function appSolve(id, value) {
+    controller.view.changeToAppSolved(id, value);
   }
 
-  function snipNumberSelector (id, value) {
-    var combinedID = `${id}v${value}`
-    controller.view.snipNumberSelector(combinedID)
+  function snipNumberSelector(id, value) {
+    var combinedID = id + 'v' + value;
+    controller.view.snipNumberSelector(combinedID);
   }
 
   // A COUPLE INIT FUNCTIONS
 
   this.saveModel = function (model) {
-    this.model = model
-  }
+    this.model = model;
+  };
 
   this.saveView = function (view) {
-    this.view = view
-  }
+    this.view = view;
+  };
 }
 
-var C = new Controller()
-var M = new Model(C)
-var V = new View(C)
+var C = new Controller();
+var M = new Model(C);
+var V = new View(C);
 
-V.init()
-C.saveModel(M)
-C.saveView(V)
+V.init();
+C.saveModel(M);
+C.saveView(V);

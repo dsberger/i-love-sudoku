@@ -8,7 +8,7 @@
     "build": "npm run build:css && npm run build:html && npm run build:js",
     "build:css": "node-sass --output-style compressed src/styles/main.scss docs/styles.css",
     "build:html": "pug src/views/index.pug -o docs",
-    "build:js": "rollup -o docs/app.js src/scripts/app.js",
+    "build:js": "rollup -c .rollup.config.js",
     "watch": "parallelshell \"npm run watch:css\" \"npm run watch:html\" \"npm run watch:js\"",
     "watch:css": "npm run build:css && npm run build:css -- -w src/styles",
     "watch:html": "npm run build:html -- -w src/views/index.pug",
@@ -19,6 +19,7 @@
   "devDependencies": {
     "babel-core": "6.14.0",
     "babel-preset-es2015": "6.14.0",
+    "babel-preset-es2015-rollup": "1.2.0",
     "chai": "3.5.0",
     "mocha": "3.0.2",
     "node-sass": "3.8.0",
@@ -26,6 +27,12 @@
     "pug": "2.0.0-beta5",
     "pug-cli": "1.0.0-alpha6",
     "rollup": "0.34.10",
+    "rollup-plugin-babel": "2.6.1",
     "rollup-watch": "2.5.0"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
   }
 }
