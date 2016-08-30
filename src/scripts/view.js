@@ -1,15 +1,15 @@
 import TileFactory from './tileFactory'
 
 function View (controller) {
-  this.init = function () {
-    var tiles = document.getElementsByClassName('tile')
-    for (var i = 0; i < tiles.length; i++) {
-      var unsolvedTile = TileFactory.unsolved(tiles[i].id, userSolve)
-      tiles[i].appendChild(unsolvedTile)
-    }
+  // DOM INITIALIZING
+
+  var tiles = document.getElementsByClassName('tile')
+  for (var i = 0; i < tiles.length; i++) {
+    var unsolvedTile = TileFactory.unsolved(tiles[i].id, userSolve)
+    tiles[i].appendChild(unsolvedTile)
   }
 
-  // DOM MANIPULATORS
+  // API FOR CONTROLLER
 
   this.changeToUserSolved = function (id, value) {
     var tile = document.getElementById(id)

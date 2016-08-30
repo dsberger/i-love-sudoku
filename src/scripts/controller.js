@@ -1,14 +1,46 @@
 function Controller () {
-  var viewQueue = []
-  var controller = this
+  var view
+  var model
 
-  var queueClearing = window.setInterval(() => {
-    dequeue()
-  }, 0)
+  var viewQueue = []
+  turnOn()
+
+  // PROCESSING CONTROLS
+
+  var solveModel
+  var processViewQueue
+
+  function turnOn () {
+    solveModel = window.setInterval(() => {
+      solveCycle()
+    }, 0)
+
+    processViewQueue = window.setInterval(() => {
+      dequeue()
+    }, 0)
+  }
+
+  function turnOff () {
+    window.clearInterval(solveModel)
+    window.clearInterval(processViewQueue)
+    viewQueue = []
+  }
+
+  // PUZZLE MANAGEMENT
+
+  function solveCycle () {
+    var actions = model.solveCycle()
+    viewQueue = viewQueue.concat(actions)
+  }
+
+  var enqueue = function (params) {
+    if (params) { viewQueue.push(params) }
+  }
 
   function dequeue () {
     if (viewQueue.length > 0) {
-      performViewAction(viewQueue.shift())
+      var action = viewQueue.shift()
+      performViewAction(action)
     }
   }
 
@@ -26,44 +58,38 @@ function Controller () {
     }
   }
 
-  // MODEL CHANGE, CALLED BY DOM
+  // API FOR DOM REQUESTS
 
   this.userSolveModel = function (numberSelectorID) {
     var x = numberSelectorID.slice(1, 2)
     var y = numberSelectorID.slice(3, 4)
     var value = numberSelectorID.slice(5)
-    this.model.solve(x, y, value)
-  }
-
-  // VIEW CHANGE, CALLED BY MODEL
-
-  this.makeViewChange = function (params) {
-    if (params) { viewQueue.push(params) }
+    enqueue(model.solveCell(x, y, value))
   }
 
   // DOM CHANGES, CALLED BY DEQUEUER
 
   function userSolveView (id, value) {
-    controller.view.changeToUserSolved(id, value)
+    view.changeToUserSolved(id, value)
   }
 
   function appSolve (id, value) {
-    controller.view.changeToAppSolved(id, value)
+    view.changeToAppSolved(id, value)
   }
 
   function snipNumberSelector (id, value) {
     var combinedID = `${id}v${value}`
-    controller.view.snipNumberSelector(combinedID)
+    view.snipNumberSelector(combinedID)
   }
 
-  // A COUPLE INIT FUNCTIONS
+  // INIT FUNCTIONS
 
-  this.saveModel = function (model) {
-    this.model = model
+  this.saveView = function (viewObject) {
+    view = viewObject
   }
 
-  this.saveView = function (view) {
-    this.view = view
+  this.saveModel = function (modelObject) {
+    model = modelObject
   }
 }
 

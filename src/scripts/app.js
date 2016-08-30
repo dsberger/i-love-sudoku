@@ -1,11 +1,15 @@
-import Model from './model'
 import View from './view'
 import Controller from './controller'
+import Puzzle from './puzzle'
 
-var C = new Controller()
-var M = new Model(C)
-var V = new View(C)
+function ILoveSudoku () {
+  var controller = new Controller()
 
-V.init()
-C.saveModel(M)
-C.saveView(V)
+  var view = new View(controller)
+  controller.saveView(view)
+
+  var puzzle = new Puzzle()
+  controller.saveModel(puzzle)
+}
+
+var app = new ILoveSudoku()

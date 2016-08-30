@@ -3,6 +3,11 @@
 .unsolved {
   @include square($tile-size);
   color: $app-only-font-color;
+  opacity: 0;
+
+  &:hover {
+    opacity: 1;
+  }
 
   .row {
     height: $cell-size;
