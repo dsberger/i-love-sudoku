@@ -39,11 +39,11 @@ function View (controller) {
   // TILE LISTENERS
 
   function clearSolve () {
-    console.log('Clear solve doesn\'t work yet!')
+    controller.reset(this.id)
   }
 
   function userSolve () {
-    controller.userSolveModel(this.id)
+    controller.solveCell(this.id)
   }
 }
 

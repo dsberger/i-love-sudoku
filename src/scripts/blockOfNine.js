@@ -2,16 +2,20 @@ function BlockOfNine (cells) {
   var unsolvedCells = cells.slice()
   var solvedCells = []
 
-  var values = {
-    1: false,
-    2: false,
-    3: false,
-    4: false,
-    5: false,
-    6: false,
-    7: false,
-    8: false,
-    9: false
+  var values = allValuesFalse()
+
+  function allValuesFalse () {
+    return {
+      1: false,
+      2: false,
+      3: false,
+      4: false,
+      5: false,
+      6: false,
+      7: false,
+      8: false,
+      9: false
+    }
   }
 
   var actions = []
@@ -27,6 +31,12 @@ function BlockOfNine (cells) {
     removeFoundValuesFromUnsolvedCells()
     huntForLastRemainingUnfoundValues()
     return actions
+  }
+
+  this.reset = function () {
+    unsolvedCells = unsolvedCells.concat(solvedCells)
+    solvedCells = []
+    values = allValuesFalse()
   }
 
   function cleanUpSolvedCells () {

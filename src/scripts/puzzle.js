@@ -18,6 +18,14 @@ function Puzzle () {
     return actions
   }
 
+  this.reset = function (x, y) {
+    var actions = []
+    actions.push(core[x][y].userReset())
+    actions = actions.concat(resetCells())
+    resetBlocks()
+    return actions
+  }
+
   function createCore () {
     var matrix = []
     for (var i = 0; i < 9; i++) {
@@ -32,6 +40,25 @@ function Puzzle () {
       row.push(new Cell(i, j))
     }
     return row
+  }
+
+  function resetCells () {
+    var actions = []
+    core.forEach((row) => {
+      row.forEach((cell) => {
+        var params = cell.appReset()
+        if (params) {
+          actions.push(params)
+        }
+      })
+    })
+    return actions
+  }
+
+  function resetBlocks () {
+    blocks.forEach((block) => {
+      block.reset()
+    })
   }
 }
 

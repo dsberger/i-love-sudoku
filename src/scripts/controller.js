@@ -1,40 +1,28 @@
 function Controller () {
-  var view
-  var model
-
   var viewQueue = []
-  turnOn()
 
-  // PROCESSING CONTROLS
+  window.setInterval(() => {
+    dequeue()
+  }, 0)
+
+  turnOnSolving()
 
   var solveModel
-  var processViewQueue
 
-  function turnOn () {
+  function turnOnSolving () {
     solveModel = window.setInterval(() => {
       solveCycle()
     }, 0)
-
-    processViewQueue = window.setInterval(() => {
-      dequeue()
-    }, 0)
   }
 
-  function turnOff () {
+  function turnOffSolving () {
     window.clearInterval(solveModel)
-    window.clearInterval(processViewQueue)
     viewQueue = []
   }
-
-  // PUZZLE MANAGEMENT
 
   function solveCycle () {
     var actions = model.solveCycle()
     viewQueue = viewQueue.concat(actions)
-  }
-
-  var enqueue = function (params) {
-    if (params) { viewQueue.push(params) }
   }
 
   function dequeue () {
@@ -47,33 +35,46 @@ function Controller () {
   function performViewAction (params) {
     switch (params.action) {
       case 'userSolved':
-        userSolveView(params.id, params.value)
+        userSolveTile(params.id, params.value)
         break
       case 'appSolved':
-        appSolve(params.id, params.value)
+        appSolveTile(params.id, params.value)
         break
       case 'removed':
         snipNumberSelector(params.id, params.value)
         break
+      case 'reset':
+        resetTile(params.id)
+        break
     }
   }
 
-  // API FOR DOM REQUESTS
+  // API FOR DOM LISTENERS
 
-  this.userSolveModel = function (numberSelectorID) {
+  this.solveCell = function (numberSelectorID) {
     var x = numberSelectorID.slice(1, 2)
     var y = numberSelectorID.slice(3, 4)
     var value = numberSelectorID.slice(5)
-    enqueue(model.solveCell(x, y, value))
+    viewQueue.push(model.solveCell(x, y, value))
+  }
+
+  this.reset = function (id) {
+    var x = id.slice(1, 2)
+    var y = id.slice(3, 4)
+
+    turnOffSolving()
+    var actions = model.reset(x, y)
+    viewQueue = viewQueue.concat(actions)
+    turnOnSolving()
   }
 
   // DOM CHANGES, CALLED BY DEQUEUER
 
-  function userSolveView (id, value) {
+  function userSolveTile (id, value) {
     view.changeToUserSolved(id, value)
   }
 
-  function appSolve (id, value) {
+  function appSolveTile (id, value) {
     view.changeToAppSolved(id, value)
   }
 
@@ -82,12 +83,18 @@ function Controller () {
     view.snipNumberSelector(combinedID)
   }
 
+  function resetTile (id) {
+    view.changeToUnsolved(id)
+  }
+
   // INIT FUNCTIONS
 
+  var view
   this.saveView = function (viewObject) {
     view = viewObject
   }
 
+  var model
   this.saveModel = function (modelObject) {
     model = modelObject
   }

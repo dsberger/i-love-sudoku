@@ -187,4 +187,107 @@ describe('Cell', () => {
       done()
     })
   })
+
+  describe('#userReset', () => {
+    it('returns an action object', (done) => {
+      var cell = new Cell(1, 2)
+      cell.userSolve(9)
+      var userResetOutput = cell.userReset()
+
+      expect(userResetOutput.id).to.equal('x1y2')
+      expect(userResetOutput.action).to.equal('reset')
+      done()
+    })
+
+    it('un-solves the cell', (done) => {
+      var cell = new Cell(1, 2)
+      cell.userSolve(8)
+      cell.userReset()
+      expect(cell.isSolved()).to.equal(false)
+      done()
+    })
+
+    it('makes the cell a blank slate', (done) => {
+      var cell = new Cell(1, 2)
+      cell.userSolve(8)
+      cell.userReset()
+      expect(cell.couldBe(1)).to.equal(true)
+      expect(cell.couldBe(2)).to.equal(true)
+      expect(cell.couldBe(3)).to.equal(true)
+      expect(cell.couldBe(4)).to.equal(true)
+      expect(cell.couldBe(5)).to.equal(true)
+      expect(cell.couldBe(6)).to.equal(true)
+      expect(cell.couldBe(7)).to.equal(true)
+      expect(cell.couldBe(8)).to.equal(true)
+      expect(cell.couldBe(9)).to.equal(true)
+      done()
+    })
+  })
+
+  describe('#appReset', () => {
+
+    context('when the cell has been user solved', () => {
+      it('returns undefined', (done) => {
+        var cell = new Cell(1, 2)
+        cell.userSolve(1)
+        expect(cell.appReset()).to.equal(undefined)
+        done()
+      })
+
+      it('the cell stays solved', (done) => {
+        var cell = new Cell(1, 2)
+        cell.userSolve(1)
+        cell.appReset()
+        expect(cell.isSolved()).to.equal(true)
+        done()
+      })
+    })
+
+    context('when the cell has been app solved', () => {
+      it('returns an action object', (done) => {
+        var cell = new Cell(1, 2)
+        cell.appSolve(9)
+        var appResetOutput = cell.appReset()
+
+        expect(appResetOutput.id).to.equal('x1y2')
+        expect(appResetOutput.action).to.equal('reset')
+        done()
+      })
+
+      it('un-solves the cell', (done) => {
+        var cell = new Cell(1, 2)
+        cell.appSolve(8)
+        cell.appReset()
+        expect(cell.isSolved()).to.equal(false)
+        done()
+      })
+    })
+
+    context('when the cell has not yet been solved', () => {
+      it('returns an action object', (done) => {
+        var cell = new Cell(1, 2)
+        cell.remove(1)
+        cell.remove(2)
+        cell.remove(3)
+        var appResetOutput = cell.appReset()
+
+        expect(appResetOutput.id).to.equal('x1y2')
+        expect(appResetOutput.action).to.equal('reset')
+        done()
+      })
+
+      it('restores removed values', (done) => {
+        var cell = new Cell(1, 2)
+        cell.remove(1)
+        cell.remove(2)
+        cell.remove(3)
+        cell.appReset()
+
+        expect(cell.couldBe(1)).to.equal(true)
+        expect(cell.couldBe(2)).to.equal(true)
+        expect(cell.couldBe(3)).to.equal(true)
+        done()
+      })
+    })
+  })
 })

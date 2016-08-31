@@ -99,54 +99,40 @@ function View(controller) {
   // TILE LISTENERS
 
   function clearSolve() {
-    console.log('Clear solve doesn\'t work yet!');
+    controller.reset(this.id);
   }
 
   function userSolve() {
-    controller.userSolveModel(this.id);
+    controller.solveCell(this.id);
   }
 }
 
 function Controller() {
-  var view;
-  var model;
-
   var viewQueue = [];
-  turnOn();
 
-  // PROCESSING CONTROLS
+  window.setInterval(function () {
+    dequeue();
+  }, 0);
+
+  turnOnSolving();
 
   var solveModel;
-  var processViewQueue;
 
-  function turnOn() {
+  function turnOnSolving() {
     solveModel = window.setInterval(function () {
       solveCycle();
     }, 0);
-
-    processViewQueue = window.setInterval(function () {
-      dequeue();
-    }, 0);
   }
 
-  function turnOff() {
+  function turnOffSolving() {
     window.clearInterval(solveModel);
-    window.clearInterval(processViewQueue);
     viewQueue = [];
   }
-
-  // PUZZLE MANAGEMENT
 
   function solveCycle() {
     var actions = model.solveCycle();
     viewQueue = viewQueue.concat(actions);
   }
-
-  var enqueue = function enqueue(params) {
-    if (params) {
-      viewQueue.push(params);
-    }
-  };
 
   function dequeue() {
     if (viewQueue.length > 0) {
@@ -158,33 +144,46 @@ function Controller() {
   function performViewAction(params) {
     switch (params.action) {
       case 'userSolved':
-        userSolveView(params.id, params.value);
+        userSolveTile(params.id, params.value);
         break;
       case 'appSolved':
-        appSolve(params.id, params.value);
+        appSolveTile(params.id, params.value);
         break;
       case 'removed':
         snipNumberSelector(params.id, params.value);
         break;
+      case 'reset':
+        resetTile(params.id);
+        break;
     }
   }
 
-  // API FOR DOM REQUESTS
+  // API FOR DOM LISTENERS
 
-  this.userSolveModel = function (numberSelectorID) {
+  this.solveCell = function (numberSelectorID) {
     var x = numberSelectorID.slice(1, 2);
     var y = numberSelectorID.slice(3, 4);
     var value = numberSelectorID.slice(5);
-    enqueue(model.solveCell(x, y, value));
+    viewQueue.push(model.solveCell(x, y, value));
+  };
+
+  this.reset = function (id) {
+    var x = id.slice(1, 2);
+    var y = id.slice(3, 4);
+
+    turnOffSolving();
+    var actions = model.reset(x, y);
+    viewQueue = viewQueue.concat(actions);
+    turnOnSolving();
   };
 
   // DOM CHANGES, CALLED BY DEQUEUER
 
-  function userSolveView(id, value) {
+  function userSolveTile(id, value) {
     view.changeToUserSolved(id, value);
   }
 
-  function appSolve(id, value) {
+  function appSolveTile(id, value) {
     view.changeToAppSolved(id, value);
   }
 
@@ -193,12 +192,18 @@ function Controller() {
     view.snipNumberSelector(combinedID);
   }
 
+  function resetTile(id) {
+    view.changeToUnsolved(id);
+  }
+
   // INIT FUNCTIONS
 
+  var view;
   this.saveView = function (viewObject) {
     view = viewObject;
   };
 
+  var model;
   this.saveModel = function (modelObject) {
     model = modelObject;
   };
@@ -208,17 +213,21 @@ function BlockOfNine(cells) {
   var unsolvedCells = cells.slice();
   var solvedCells = [];
 
-  var values = {
-    1: false,
-    2: false,
-    3: false,
-    4: false,
-    5: false,
-    6: false,
-    7: false,
-    8: false,
-    9: false
-  };
+  var values = allValuesFalse();
+
+  function allValuesFalse() {
+    return {
+      1: false,
+      2: false,
+      3: false,
+      4: false,
+      5: false,
+      6: false,
+      7: false,
+      8: false,
+      9: false
+    };
+  }
 
   var actions = [];
 
@@ -235,6 +244,12 @@ function BlockOfNine(cells) {
     removeFoundValuesFromUnsolvedCells();
     huntForLastRemainingUnfoundValues();
     return actions;
+  };
+
+  this.reset = function () {
+    unsolvedCells = unsolvedCells.concat(solvedCells);
+    solvedCells = [];
+    values = allValuesFalse();
   };
 
   function cleanUpSolvedCells() {
@@ -361,14 +376,15 @@ function getBox(matrix, x, y) {
 
 function Cell(x, y) {
   var id = 'x' + x + 'y' + y;
-  var solvedByApp = false;
+  var solvedByUser = false;
   var solvedValue;
   var possibleValues = initializeValues();
 
   this.userSolve = function (value) {
-    if (!this.isSolved() || solvedByApp) {
+    if (!this.isSolved() || !solvedByUser) {
       var params = solve(value);
       params.action = 'userSolved';
+      solvedByUser = true;
       return params;
     }
   };
@@ -377,7 +393,6 @@ function Cell(x, y) {
     if (!this.isSolved()) {
       var params = solve(value);
       params.action = 'appSolved';
-      solvedByApp = true;
       return params;
     }
   };
@@ -398,12 +413,32 @@ function Cell(x, y) {
     }
   };
 
+  this.userReset = function () {
+    solvedByUser = false;
+    return reset();
+  };
+
+  this.appReset = function () {
+    if (!solvedByUser) {
+      return reset();
+    }
+  };
+
   function solve(value) {
     solvedValue = value;
     possibleValues = [];
     return {
       id: id,
       value: value
+    };
+  }
+
+  function reset() {
+    solvedValue = undefined;
+    possibleValues = initializeValues();
+    return {
+      id: id,
+      action: 'reset'
     };
   }
 
@@ -451,6 +486,14 @@ function Puzzle() {
     return actions;
   };
 
+  this.reset = function (x, y) {
+    var actions = [];
+    actions.push(core[x][y].userReset());
+    actions = actions.concat(resetCells());
+    resetBlocks();
+    return actions;
+  };
+
   function createCore() {
     var matrix = [];
     for (var i = 0; i < 9; i++) {
@@ -465,6 +508,25 @@ function Puzzle() {
       row.push(new Cell(i, j));
     }
     return row;
+  }
+
+  function resetCells() {
+    var actions = [];
+    core.forEach(function (row) {
+      row.forEach(function (cell) {
+        var params = cell.appReset();
+        if (params) {
+          actions.push(params);
+        }
+      });
+    });
+    return actions;
+  }
+
+  function resetBlocks() {
+    blocks.forEach(function (block) {
+      block.reset();
+    });
   }
 }
 

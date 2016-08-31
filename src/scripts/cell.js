@@ -1,13 +1,14 @@
 function Cell (x, y) {
   var id = `x${x}y${y}`
-  var solvedByApp = false
+  var solvedByUser = false
   var solvedValue
   var possibleValues = initializeValues()
 
   this.userSolve = function (value) {
-    if (!this.isSolved() || solvedByApp) {
+    if (!this.isSolved() || !solvedByUser) {
       var params = solve(value)
       params.action = 'userSolved'
+      solvedByUser = true
       return params
     }
   }
@@ -16,7 +17,6 @@ function Cell (x, y) {
     if (!this.isSolved()) {
       var params = solve(value)
       params.action = 'appSolved'
-      solvedByApp = true
       return params
     }
   }
@@ -35,12 +35,32 @@ function Cell (x, y) {
     }
   }
 
+  this.userReset = function () {
+    solvedByUser = false
+    return reset()
+  }
+
+  this.appReset = function () {
+    if (!solvedByUser) {
+      return reset()
+    }
+  }
+
   function solve (value) {
     solvedValue = value
     possibleValues = []
     return {
       id: id,
       value: value
+    }
+  }
+
+  function reset () {
+    solvedValue = undefined
+    possibleValues = initializeValues()
+    return {
+      id: id,
+      action: 'reset'
     }
   }
 
