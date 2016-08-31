@@ -5,7 +5,8 @@ export default {
   format: 'cjs',
   plugins: [ babel({
     presets: ['es2015-rollup'],
-    babelrc: false
+    babelrc: false,
+    minified: true
   }) ],
   dest: 'docs/app.js'
 }
