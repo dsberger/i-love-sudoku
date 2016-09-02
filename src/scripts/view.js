@@ -9,6 +9,11 @@ function View (controller) {
     tiles[i].appendChild(unsolvedTile)
   }
 
+  var newPuzzleButton = document.getElementById('new-puzzle')
+  newPuzzleButton.addEventListener('click', () => {
+    controller.newPuzzle()
+  })
+
   // API FOR CONTROLLER
 
   this.changeToUserSolved = function (id, value) {

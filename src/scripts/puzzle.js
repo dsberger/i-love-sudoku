@@ -21,7 +21,13 @@ function Puzzle () {
   this.reset = function (x, y) {
     var actions = []
     actions.push(core[x][y].userReset())
-    actions = actions.concat(resetCells())
+    actions = actions.concat(appResetAllCells())
+    resetBlocks()
+    return actions
+  }
+
+  this.resetAll = function () {
+    var actions = userResetAllCells()
     resetBlocks()
     return actions
   }
@@ -42,11 +48,20 @@ function Puzzle () {
     return row
   }
 
-  function resetCells () {
+  function appResetAllCells () {
+    return resetAllCells('app')
+  }
+
+  function userResetAllCells () {
+    return resetAllCells('user')
+  }
+
+  function resetAllCells (initiator) {
+    var methodName = `${initiator}Reset`
     var actions = []
     core.forEach((row) => {
       row.forEach((cell) => {
-        var params = cell.appReset()
+        var params = cell[methodName].call()
         if (params) {
           actions.push(params)
         }

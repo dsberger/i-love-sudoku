@@ -68,6 +68,12 @@ function Controller () {
     turnOnSolving()
   }
 
+  this.newPuzzle = function () {
+    turnOffSolving()
+    viewQueue = puzzle.resetAll()
+    turnOnSolving()
+  }
+
   // DOM CHANGES, CALLED BY DEQUEUER
 
   function userSolveTile (id, value) {
