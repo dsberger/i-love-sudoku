@@ -74,6 +74,10 @@ function Controller () {
     turnOnSolving()
   }
 
+  this.graphSolve = function () {
+    puzzle.graphSolve()
+  }
+
   // DOM CHANGES, CALLED BY DEQUEUER
 
   function userSolveTile (id, value) {

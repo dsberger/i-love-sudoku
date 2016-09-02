@@ -14,6 +14,11 @@ function View (controller) {
     controller.newPuzzle()
   })
 
+  var graphSolveButton = document.getElementById('graph-solve')
+  graphSolveButton.addEventListener('click', () => {
+    controller.graphSolve()
+  })
+
   // API FOR CONTROLLER
 
   this.changeToUserSolved = function (id, value) {

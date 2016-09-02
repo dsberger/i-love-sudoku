@@ -2,22 +2,6 @@ function BlockOfNine (cells) {
   var unsolvedCells = cells.slice()
   var solvedCells = []
 
-  var values = allValuesFalse()
-
-  function allValuesFalse () {
-    return {
-      1: false,
-      2: false,
-      3: false,
-      4: false,
-      5: false,
-      6: false,
-      7: false,
-      8: false,
-      9: false
-    }
-  }
-
   var actions = []
 
   function addToActions (params) {
@@ -36,14 +20,12 @@ function BlockOfNine (cells) {
   this.reset = function () {
     unsolvedCells = unsolvedCells.concat(solvedCells)
     solvedCells = []
-    values = allValuesFalse()
   }
 
   function cleanUpSolvedCells () {
     for (var i = unsolvedCells.length - 1; i >= 0; i--) {
       if (unsolvedCells[i].isSolved()) {
         var cell = unsolvedCells.splice(i, 1)[0]
-        values[cell.getSolvedValue()] = true
         solvedCells.push(cell)
       }
     }
@@ -90,20 +72,20 @@ function BlockOfNine (cells) {
   }
 
   function foundValues () {
-    var found = []
-    for (var number in values) {
-      if (values[number]) {
-        found.push(parseInt(number, 10))
-      }
-    }
-    return found
+    var collection = []
+    solvedCells.forEach((cell) => {
+      var value = parseInt(cell.getSolvedValue(), 10)
+      collection.push(value)
+    })
+    return collection
   }
 
   function unfoundValues () {
+    var found = foundValues()
     var unfound = []
-    for (var number in values) {
-      if (!values[number]) {
-        unfound.push(parseInt(number, 10))
+    for (var i = 1; i <= 9; i++) {
+      if (found.indexOf(i) === -1) {
+        unfound.push(i)
       }
     }
     return unfound
