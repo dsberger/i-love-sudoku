@@ -7,21 +7,21 @@ function Controller () {
 
   turnOnSolving()
 
-  var solveModel
+  var solvepuzzle
 
   function turnOnSolving () {
-    solveModel = window.setInterval(() => {
+    solvepuzzle = window.setInterval(() => {
       solveCycle()
     }, 0)
   }
 
   function turnOffSolving () {
-    window.clearInterval(solveModel)
+    window.clearInterval(solvepuzzle)
     viewQueue = []
   }
 
   function solveCycle () {
-    var actions = model.solveCycle()
+    var actions = puzzle.solveCycle()
     viewQueue = viewQueue.concat(actions)
   }
 
@@ -55,7 +55,7 @@ function Controller () {
     var x = numberSelectorID.slice(1, 2)
     var y = numberSelectorID.slice(3, 4)
     var value = numberSelectorID.slice(5)
-    viewQueue.push(model.solveCell(x, y, value))
+    viewQueue.push(puzzle.solveCell(x, y, value))
   }
 
   this.reset = function (id) {
@@ -63,7 +63,7 @@ function Controller () {
     var y = id.slice(3, 4)
 
     turnOffSolving()
-    var actions = model.reset(x, y)
+    var actions = puzzle.reset(x, y)
     viewQueue = viewQueue.concat(actions)
     turnOnSolving()
   }
@@ -94,9 +94,9 @@ function Controller () {
     view = viewObject
   }
 
-  var model
-  this.saveModel = function (modelObject) {
-    model = modelObject
+  var puzzle
+  this.savePuzzle = function (puzzleObject) {
+    puzzle = puzzleObject
   }
 }
 

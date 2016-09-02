@@ -9,7 +9,7 @@ function ILoveSudoku () {
   controller.saveView(view)
 
   var puzzle = new Puzzle()
-  controller.saveModel(puzzle)
+  controller.savePuzzle(puzzle)
 }
 
 var app = new ILoveSudoku()

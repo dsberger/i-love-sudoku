@@ -5,7 +5,7 @@ function Cell (x, y) {
   var possibleValues = initializeValues()
 
   this.userSolve = function (value) {
-    if (!this.isSolved() || !solvedByUser) {
+    if (!solvedByUser) {
       var params = solve(value)
       params.action = 'userSolved'
       solvedByUser = true
