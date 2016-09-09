@@ -72,12 +72,9 @@ function BlockOfNine (cells) {
   }
 
   function foundValues () {
-    var collection = []
-    solvedCells.forEach((cell) => {
-      var value = parseInt(cell.getSolvedValue(), 10)
-      collection.push(value)
+    return solvedCells.map((cell) => {
+      return parseInt(cell.getSolvedValue(), 10)
     })
-    return collection
   }
 
   function unfoundValues () {
