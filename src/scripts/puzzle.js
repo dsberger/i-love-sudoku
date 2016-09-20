@@ -1,8 +1,8 @@
 import blocksAssembler from './blocksAssembler'
 import Cell from './cell'
 
-function Puzzle (cellMatrix) {
-  var core = cellMatrix || createCore()
+function Puzzle () {
+  var core = createCore()
   var blocks = blocksAssembler(core)
 
   this.solveCell = function (x, y, value) {
@@ -33,8 +33,6 @@ function Puzzle (cellMatrix) {
   }
 
   this.graphSolve = function () {
-    console.log('puzzle graph solve requested')
-    var puzzle = new Puzzle(core)
   }
 
   function createCore () {

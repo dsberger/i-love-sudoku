@@ -78,6 +78,10 @@ function Cell (x, y) {
     }
   }
 
+  this.getPossibleValues = function () {
+    return possibleValues
+  }
+
   this.couldBe = function (value) {
     return (possibleValues.indexOf(value) !== -1)
   }

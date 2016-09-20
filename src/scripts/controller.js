@@ -75,7 +75,8 @@ function Controller () {
   }
 
   this.graphSolve = function () {
-    puzzle.graphSolve()
+    turnOffSolving()
+    viewQueue = viewQueue.concat(puzzle.graphSolve())
   }
 
   // DOM CHANGES, CALLED BY DEQUEUER

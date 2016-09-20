@@ -188,6 +188,39 @@ describe('Cell', () => {
     })
   })
 
+  describe('#getPossibleValues', () => {
+    it('returns a full array in a new cell', (done) => {
+      var cell = new Cell(1, 2)
+      expect(cell.getPossibleValues()).to.deep.equal([1, 2, 3, 4, 5, 6, 7, 8, 9])
+      done()
+    })
+
+    it('returns all values that have not been removed', (done) => {
+      var cell = new Cell(1, 2)
+      for (var i = 1; i < 8; i++) {
+        cell.remove(i)
+      }
+      expect(cell.getPossibleValues()).to.deep.equal([8, 9])
+      done()
+    })
+
+    it('returns an array of one when other values have been removed but the cell has not been solved', (done) => {
+      var cell = new Cell(1, 2)
+      for (var i = 1; i < 9; i++) {
+        cell.remove(i)
+      }
+      expect(cell.getPossibleValues()).to.deep.equal([9])
+      done()
+    })
+
+    it('returns an empty array when the cell has been solved', (done) => {
+      var cell = new Cell(1, 2)
+      cell.appSolve(8)
+      expect(cell.getPossibleValues()).to.deep.equal([])
+      done()
+    })
+  })
+
   describe('#userReset', () => {
     it('returns an action object', (done) => {
       var cell = new Cell(1, 2)
