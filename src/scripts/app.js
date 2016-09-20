@@ -12,4 +12,4 @@ function ILoveSudoku () {
   controller.savePuzzle(puzzle)
 }
 
-var app = new ILoveSudoku()
+ILoveSudoku()
