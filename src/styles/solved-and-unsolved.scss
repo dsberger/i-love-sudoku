@@ -1,0 +1,40 @@
+@import 'variables';
+
+.unsolved {
+  @include square($tile-size);
+  color: $app-only-font-color;
+
+  .row {
+    height: $cell-size;
+    width: $tile-size;
+
+    .number {
+      @include square($cell-size);
+      @include text-centering($cell-size);
+      float: left;
+
+      &:hover {
+        color: black;
+        background-image: radial-gradient(#ADD8E6, #FFF);
+      }
+    }
+
+    .blank {
+      @include square($cell-size);
+      float: left;
+    }
+  }
+}
+
+.solved {
+  @include square($tile-size);
+  @include text-centering($tile-size);
+}
+
+.by-user {
+  color: $user-action-font-color;
+}
+
+.by-app {
+  color: $app-only-font-color;
+}

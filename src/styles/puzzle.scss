@@ -1,0 +1,19 @@
+@import 'variables';
+
+.puzzle {
+  @include standard-border($puzzle-border-width);
+  @include square($puzzle-size);
+  margin: 0;
+  float: left;
+
+  .row {
+    height: $box-size;
+    width: $puzzle-size;
+
+    .box-container {
+      @include standard-border($box-border-width);
+      @include square($box-size);
+      float: left;
+    }
+  }
+}

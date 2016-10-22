@@ -1,0 +1,17 @@
+@import 'variables';
+
+.box {
+  @include square($box-size);
+
+  .row {
+    height: $tile-size;
+    width: $box-size;
+
+    .tile {
+      @include standard-border($tile-border-width);
+      @include square($tile-size);
+      float: left;
+      cursor: pointer;
+    }
+  }
+}

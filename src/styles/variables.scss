@@ -1,0 +1,32 @@
+$tile-border-width: 1px;
+$box-border-width: 2px;
+$puzzle-border-width: 3px;
+
+$cell-size: 16px;
+$tile-size: $cell-size * 3;
+$box-size: ($tile-size + $tile-border-width * 2) * 3;
+$puzzle-size: ($box-size + $box-border-width * 2) * 3;
+
+$sidebar-width: 300px;
+$container-width: $puzzle-size + $sidebar-width + 30px;
+
+$app-only-font-color: #808080;
+$user-action-font-color: #000000;
+$font-size-factor: 0.8;
+
+@mixin square($size) {
+  height: $size;
+  width: $size;
+}
+
+@mixin standard-border($size) {
+  border-width: $size;
+  border-style: solid;
+  border-color: black;
+}
+
+@mixin text-centering($size) {
+  font-size: $size * $font-size-factor;
+  line-height: $size;
+  text-align: center;
+}

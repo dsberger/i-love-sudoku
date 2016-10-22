@@ -1,0 +1,25 @@
+mixin box-row(x, y)
+  .row
+    .tile(id=`x${x}y${y}`)
+    .tile(id=`x${x+1}y${y}`)
+    .tile(id=`x${x+2}y${y}`)
+
+mixin box(x, y)
+  .box
+    +box-row(x, y )
+    +box-row(x, y+1)
+    +box-row(x, y+2)
+
+mixin puzzle-row(y)
+  .row
+    .box-container
+      +box(0, y)
+    .box-container
+      +box(3, y)
+    .box-container
+      +box(6, y)
+
+.puzzle
+  +puzzle-row(0)
+  +puzzle-row(3)
+  +puzzle-row(6)
